@@ -38,6 +38,11 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
+/* Playtest 2026-09-09: sticky-хедер (низ ~80px) на ВСІХ якорях ховав верх секції
+   (~80px, замір: targetTop 0–1 при headerBottom 80). scroll-margin-top зарезервує
+   зону хедера після переходу — інакше заголовок секції користувачеві не видно.
+   Якщо змінюєш висоту хедера — перерахуй сюди (106 = hero-зміщення, так само). */
+[id] { scroll-margin-top: 106px; }
 
 body {
   font-family: var(--font);
