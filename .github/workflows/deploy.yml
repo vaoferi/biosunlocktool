@@ -20,9 +20,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           # cache: 'npm' навмисно НЕ ставимо: у репо немає package-lock.json,
           # а setup-node падає з помилкою, якщо lockfile відсутній.
+        # Node ≥20 обов'язковий: wrangler відмовляється працювати на 18
+        # (і тоді крок створення проєкту мовчки не виконується).
 
       - name: Install Wrangler
         run: npm install -g wrangler
