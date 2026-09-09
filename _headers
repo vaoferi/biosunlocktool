@@ -14,5 +14,10 @@
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
 
+# OG-банер: скрейпери (Telegram/FB) кешують og:image дуже агресивно — короткий TTL,
+# щоб регенерація банера дійшла до превʼю без багатогодинного застарілого edge-кешу.
+/og-cover.jpg
+  Cache-Control: public, max-age=3600, must-revalidate
+
 /locales/en-US/*
   Cache-Control: public, max-age=0, must-revalidate
