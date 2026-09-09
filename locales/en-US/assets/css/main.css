@@ -25,6 +25,15 @@
      Міняєш характер літер — міняй тільки ці два значення. */
   --fig-dark: #0d3d3d;
   --fig-light: #4f9be8;
+  /* ЄДИНИЙ власник розміру фігур «8FC8»: --figd = діаметр диска вісімки.
+     Вся геометрія літер похідна: розмір = var(--figd) × співвідношення від базової
+     геометрії (база D = 92px; таблиця співвідношень — біля .char нижче).
+     Чому vmin, а не vw/px: hero має вміщатись в 1 екран за ЛЮБИХ пропорцій
+     (зауваження користувача 2026-09-09) — vmin масштабує від МЕНШОЇ сторони,
+     тож на низьких (ноутбук з панеллю браузера) і вузьких (телефон) екранах
+     фігури стискаються разом із текстом. Окремі px-розміри фігур у брейкпоінтах
+     видалені — вся система тепер масштабується сама. */
+  --figd: clamp(44px, 9.5vmin, 118px);
   --accent: #5a9ff0;
   --accent-2: #1a6e6a;
   --font: "Inter Tight", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -169,31 +178,53 @@ html::before {
 .cta-text { font-size: 14px; font-weight: 500; }
 
 /* HERO */
-/* 32→56 (2026-09-09): користувач — «низ hero занадто близько до краю видимого екрана».
-   Рядок довіри (.hero-trust) видував секцію вниз. Те саме значення в @media ≤900 нижче. */
-.hero { padding: 24px 0 56px; }
+/* Вертикальний ритим hero — clamp від vmin: на низьких екранах відступи стискаються,
+   і рядок довіри (.hero-trust, останній елемент) не випадає за межі першого екрана.
+   Історія: 32→56 (2026-09-09, «низ hero занадто близько до краю») → clamp — та сама
+   турбота, але без виходу за viewport на низьких екранах.
+   min-height: 100svh − sticky-header зона (top 12 + header ~62 + margin 32 ≈ 106px):
+   hero ЗАВЖДИ заповнює перший екран повністю, тож «Our Products» починається тільки
+   з другого (зауваження користувача 2026-09-09). svh (не 100vh!): на мобільних
+   vh включає зону зниклої адресної строки — без цього заголовок секції визирає.
+   Фолбек для старих браузерів: звичайний 100vh рядком вище. */
+.hero {
+  min-height: calc(100vh - 106px); /* фолбек */
+  min-height: calc(100svh - 106px);
+  /* Вертикальний розподіл: фігури вгорі, текст/CTA/довіра притиснуті до низу —
+     інакше при 100svh між CTA і довірою лишається діра. */
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: clamp(16px, 3vmin, 32px) 0 clamp(24px, 5.5vmin, 56px);
+}
+.hero-visual { margin-bottom: auto; } /* фігури прижаті вгору, текст — до низу */
 
 .hero-trust {
-  margin-top: 16px; font-size: 14px; color: var(--mute); letter-spacing: 0.01em;
+  margin-top: clamp(8px, 1.8vmin, 16px);
+  font-size: clamp(12px, 1.5vmin, 14px); color: var(--mute); letter-spacing: 0.01em;
 }
 
 .eight-shape {
   display: flex; align-items: center; justify-content: center;
-  gap: 20px; margin: 0 auto 20px; max-width: 700px;
+  gap: clamp(8px, 1.85vmin, 22px);
+  margin: 0 auto clamp(12px, 2.2vmin, 20px); max-width: 700px;
 }
 /* Зерно плівки з оригіналу (feTurbulence+overlay) БУЛО тут і знято 2026-09-09:
    його прямокутник накривав усю зону фігур і на темному тлі виглядав як
    зайвий квадратний фон (зауваження користувача). Не повертати без маски,
    що обрізає зерно точно по силуетах літер. */
 
-.char { position: relative; width: 92px; height: 158px; flex-shrink: 0; }
+/* Коробки літер. Співвідношення від D = --figd (база 92px):
+   .char (коробка F/C): 1×1.7174D (92→158) | 8: висота = 2D (1:2 оригіналу)
+   F-стійка: left .326D top .174D w .348D h 1.370D | F-рамено: w .609D h .348D,
+   тінь .674D | C: left/top .087D, коробка .826D×1.543D.
+   НЕ міняти окремі calc-и «на око» — перерахуй від базових px (30/92=0.326 тощо). */
+.char { position: relative; width: var(--figd); height: calc(var(--figd) * 1.7174); flex-shrink: 0; }
 
 /* Вісімки — точна пропорція оригіналу 1:2 (architect-порт): контейнер = дві висоти
    диска, диски лише торкаються, «пояс» дає translateY(±--close). Раніше контейнер
    був 158px при дисках 92 → перекриття 26px, яке маска не приховувала — фігури
    «скомкались» (зауваження користувача 2026-09-09). Висоту тримати = 2×диск
    у КОЖНОМУ брейкпоінті нижче. */
-.char-8, .char-8-mirror { height: 184px; }
+.char-8, .char-8-mirror { height: calc(var(--figd) * 2); }
 
 /* Механізм «дихання» вісімок — дослівний порт з оригіналу: одна змінна --close керує
    ОДНОЧАСНО глибиною зрізу маски і зсувом дисків. Реєстрація @property робить її
@@ -217,7 +248,7 @@ html::before {
 .char-8::before, .char-8::after,
 .char-8-mirror::before, .char-8-mirror::after {
   content: ''; position: absolute;
-  width: 92px; height: 92px; border-radius: 50%;
+  width: var(--figd); height: var(--figd); border-radius: 50%;
   background: conic-gradient(from 0deg, var(--fig-dark), var(--fig-light));
   mask-image: linear-gradient(transparent calc(var(--close) / 2), black var(--close));
   -webkit-mask-image: linear-gradient(transparent calc(var(--close) / 2), black var(--close));
@@ -230,29 +261,32 @@ html::before {
   50% { --close: 20%; }
 }
 
-/* F: жирні пропорції (стійка 32px, рамени 32px) — вибір користувача «Жирна»,
-   щоб фігура важила поруч із круглими 8/C. Товщини узгоджені з .char у всіх
-   брейкпоінтах — якщо міняєш .char, онови і тут, і в @media 1400/768/480/360. */
+/* F: жирні пропорції (стійка = рамени .348D ≈ 32px при базі) — вибір користувача
+   «Жирна», щоб фігура важила поруч із круглими 8/C. Вся геометрія — співвідношення
+   від --figd (див. таблицю біля .char): масштабується автоматично на всіх екранах. */
 .char-f::before {
   content: ''; position: absolute;
-  left: 30px; top: 16px; width: 32px; height: 126px;
+  left: calc(var(--figd) * 0.326); top: calc(var(--figd) * 0.174);
+  width: calc(var(--figd) * 0.348); height: calc(var(--figd) * 1.370);
   background: linear-gradient(var(--fig-light), var(--fig-dark));
-  border-radius: 8px;
+  border-radius: calc(var(--figd) * 0.087);
   animation: eightBreath 4s ease-in-out infinite reverse;
 }
 
 .char-f::after {
   content: ''; position: absolute;
-  left: 30px; top: 16px; width: 56px; height: 32px;
+  left: calc(var(--figd) * 0.326); top: calc(var(--figd) * 0.174);
+  width: calc(var(--figd) * 0.609); height: calc(var(--figd) * 0.348);
   background: linear-gradient(var(--fig-light), var(--fig-dark));
-  border-radius: 8px;
-  box-shadow: 0 62px 0 var(--fig-dark);
+  border-radius: calc(var(--figd) * 0.087);
+  box-shadow: 0 calc(var(--figd) * 0.674) 0 var(--fig-dark);
   animation: eightBreath 4s ease-in-out infinite;
 }
 
 .char-c::before {
   content: ''; position: absolute;
-  left: 8px; top: 8px; width: 76px; height: 142px;
+  left: calc(var(--figd) * 0.087); top: calc(var(--figd) * 0.087);
+  width: calc(var(--figd) * 0.826); height: calc(var(--figd) * 1.543);
   border-radius: 50%;
   /* C як жирна дуга: конус малює колір + клиновий рот праворуч (0° = вгору,
      90° = праворуч; рот 64–116°), радіальна маска вибирає отвір.
@@ -282,7 +316,7 @@ html::before {
 .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 13px; letter-spacing: 0.04em; color: var(--text-2);
-  margin-bottom: 12px;
+  margin-bottom: clamp(8px, 1.4vmin, 12px);
 }
 .eyebrow::before { content: ""; display: inline-block; width: 10px; height: 1px; background: currentColor; }
 .eyebrow::after { content: ""; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: currentColor; margin-left: 4px; }
@@ -291,7 +325,9 @@ html::before {
   font-family: var(--font-display);
   /* line-height ~1.02: заголовок має триматись в 1 екран разом з CTA.
      Якщо збільшувати — перевіряти, що hero не виїжджає за перший viewport. */
-  font-size: clamp(40px, 8vw, 96px);
+  /* Розмір від vmin (не 8vw!): заголовок має стискатись і на НИЗЬКИХ екранах,
+     інакше hero не вміщується в 1 екран разом із CTA і рядком довіри. */
+  font-size: clamp(38px, 7vmin, 96px);
   line-height: 1.02; letter-spacing: -0.03em; margin: 0 0 14px;
   display: flex; flex-direction: column; align-items: flex-start;
 }
@@ -301,7 +337,7 @@ html::before {
    НЕ всередині h1: дрібний текст між гігантськими дужками читався погано. */
 .hero-sub {
   display: flex; align-items: center; flex-wrap: wrap;
-  gap: 8px 20px; margin: 0 0 20px; max-width: 62ch;
+  gap: 8px 20px; margin: 0 0 clamp(12px, 2.2vmin, 20px); max-width: 62ch;
 }
 .title-desc {
   font-family: var(--font);
@@ -316,7 +352,7 @@ html::before {
 .hero-models .models-icon { width: 15px; height: 15px; color: var(--accent); flex-shrink: 0; }
 .hero-models .paren { color: var(--mute); font-weight: 400; }
 
-.hero-cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+.hero-cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: clamp(10px, 2vmin, 18px); }
 
 .btn-buy {
   display: inline-flex; align-items: center; gap: 12px;
@@ -490,6 +526,21 @@ html::before {
 }
 .after-guides-cta h2 { font-family: var(--font-display); font-size: 22px; margin-bottom: 8px; }
 .after-guides-cta p { color: var(--text-2); margin-bottom: 20px; }
+/* Кнопки в CTA центровані на ВСІХ ширинах: text-align секції не діє на flex-рядок
+   (.hero-cta-row — flex, за замовчуванням притиснутий ліворуч — саме це бачив користувач). */
+.after-guides-cta .hero-cta-row { justify-content: center; }
+
+/* Достатньо місця по ширині: текст і кнопки стають ОДНИМ рядком
+   (заголовок | опис | Buy Tool | Telegram Bot), центровані. Нижче 1100px —
+   колонкою з центрованими кнопками ( там тісно, рядок б перенісся хаотично). */
+@media (min-width: 1100px) {
+  .after-guides-cta {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 12px clamp(16px, 3vw, 36px); text-align: left; padding: 28px 36px;
+  }
+  .after-guides-cta p { margin-bottom: 0; }
+  .after-guides-cta .hero-cta-row { margin-top: 0; flex-wrap: nowrap; }
+}
 
 /* FOOTER */
 .site-footer strong { color: var(--text); font-weight: 600; }
@@ -508,12 +559,6 @@ html::before {
 /* RESPONSIVE — Desktop wide */
 @media (min-width: 1400px) {
   .page { max-width: 1320px; padding: 32px 48px 80px; }
-  .char { width: 118px; height: 200px; }
-  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 118px; height: 118px; }
-  .char-8, .char-8-mirror { height: 236px; } /* 1:2 = 2×118 */
-  .char-f::before { left: 39px; top: 20px; width: 40px; height: 160px; }
-  .char-f::after { left: 39px; top: 20px; width: 70px; height: 40px; box-shadow: 0 80px 0 var(--fig-dark); }
-  .char-c::before { width: 100px; height: 172px; }
 }
 
 /* RESPONSIVE — Tablet landscape */
@@ -553,8 +598,9 @@ html::before {
   .products-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
   .step-row { grid-template-columns: repeat(2, 1fr); max-width: 500px; margin-left: auto; margin-right: auto; }
   .guides-grid { grid-template-columns: repeat(2, 1fr); }
-  .title { font-size: clamp(34px, 7vw, 56px); }
-  .hero { padding: 24px 0 56px; }
+  /* .title і .hero тут БІЛЬШЕ не перевизначаються: розмір тексту і вертикальний
+     ритим тепер самі масштабуються від vmin (базові clamp-и вище), і hero
+     вміщується в 1 екран за будь-яких пропорцій (зауваження 2026-09-09). */
 }
 
 /* RESPONSIVE — Mobile large */
@@ -562,13 +608,6 @@ html::before {
   .page { padding: 16px 16px 40px; }
   .header { top: 8px; margin-bottom: 24px; padding: 10px 14px; }
   .logo-text { display: none; }
-  .eight-shape { gap: 16px; }
-  .char { width: 90px; height: 160px; }
-  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 90px; height: 90px; }
-  .char-8, .char-8-mirror { height: 180px; } /* 1:2 = 2×90 */
-  .char-f::before { left: 30px; width: 30px; height: 128px; }
-  .char-f::after { left: 30px; width: 54px; height: 30px; box-shadow: 0 68px 0 var(--fig-dark); }
-  .char-c::before { width: 70px; height: 140px; }
   .products-grid { gap: 16px; }
   .buy-card { padding: 32px 24px; }
   .pay-row { flex-direction: column; align-items: center; }
@@ -581,24 +620,12 @@ html::before {
   .guides-grid { grid-template-columns: 1fr; }
   .hero-cta-row { flex-direction: column; }
   .btn-buy, .btn-telegram { width: 100%; justify-content: center; }
-  .eight-shape { gap: 10px; }
-  .char { width: 70px; height: 130px; }
-  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 70px; height: 70px; }
-  .char-8, .char-8-mirror { height: 140px; } /* 1:2 = 2×70 */
-  .char-f::before { left: 23px; width: 24px; height: 106px; }
-  .char-f::after { left: 23px; width: 42px; height: 24px; box-shadow: 0 58px 0 var(--fig-dark); }
-  .char-c::before { width: 55px; height: 110px; }
   .clay-card { padding: 24px 20px; }
   .title { letter-spacing: -0.02em; }
 }
 
 /* RESPONSIVE — Very small */
 @media (max-width: 360px) {
-  .eight-shape { gap: 8px; }
-  .char { width: 60px; height: 110px; }
-  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 60px; height: 60px; }
-  .char-8, .char-8-mirror { height: 120px; } /* 1:2 = 2×60 */
-  .char-f::before { left: 19px; width: 21px; height: 90px; }
-  .char-f::after { left: 19px; width: 37px; height: 21px; box-shadow: 0 48px 0 var(--fig-dark); }
-  .char-c::before { width: 45px; height: 90px; }
+  /* Фігури НЕ перевизначаються: --figd (vmin) сам дає ~53px на 360×640.
+     Тут лишається тільки те, що справді специфічне для вузьких екранів. */
 }
