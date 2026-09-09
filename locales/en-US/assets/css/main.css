@@ -1,7 +1,9 @@
 /* BIOS ZONE — American Landing (en-US)
    Polish: WCAG AA contrast, full responsive coverage */
 :root {
-  --bg: #0e0e12;
+  --bg: #0a0a10; /* = базовий колір WebGL-фону і #bg-fallback: до першого кадру і без WebGL
+     сторінка вже темна (слабкі мережі/пристрої — жодного білого спалаху). Міняти суворо разом
+     з setClearColor у background.js і градієнтом #bg-fallback. */
   --text: #f5f5fa;
   --text-2: #b8b8c8;
   --mute: #a0a0b0;
@@ -13,7 +15,9 @@
   /* Єдиний рецепт скла (2026-09-09, за побажанням): хедер, розкритий акордеон і футер
      мають ІДЕНТИЧНІ прозорість/матовість/тінь. Міняти «скло» — тільки тут. */
   --glass-bg: rgba(14, 14, 18, 0.45);
-  --glass-blur: 28px;
+  /* Слабкі GPU: 3D-фігури бояться blur — рендерителі малюють текстуру і блюрять її
+     щокадру. Скло сприймається так само, а батарея/фпс на телефонах живуть. */
+  --glass-blur: 16px;
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 
   /* Палітра фігур «8FC8» — ЄДИНИЙ власник кольорів літер (architect-прохід 2026-09-09,
@@ -62,11 +66,26 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
 }
 
+/* Слабкі пристрої: фон сторінки = градієнт фолбеку. Без нього до першого WebGL-кадру
+   (і на пристроях без WebGL) під контентом була б порожнеча/білий спалах. Тепер
+   «перша фарба» сторінки правильна навіть до виконання JS — і без стрибка,
+   коли canvas з'являється поверх (він малює той самий колір бази). */
+/* Слабкі пристрої: фон сторінки = базовий колір WebGL (--bg вище). Без цього до першого
+   WebGL-кадру (і на пристроях без WebGL) під контентом була б порожнеча. «Перша фарба»
+   правильна ще до JS — і без стрибка, коли canvas з'являється поверх.
+   (Раніше тут стояв окремий коментар про градієнт фолбеку — об'єднано.) */
 #bg-three { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 #bg-three canvas { display: block; width: 100% !important; height: 100% !important; }
 #bg-fallback {
   position: fixed; inset: 0; z-index: 0;
-  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a10 100%);
+  /* Статичний «мармуровий» фолбек для слабких мереж/пристроїв без WebGL: три м'які
+     плями у фірмових тонах поверх бази. Без анімації й GPU — сторінка без WebGL
+     більше не виглядає мертво-чорною. База = --bg (тримати синхронно). */
+  background:
+    radial-gradient(ellipse 60% 50% at 25% 30%, rgba(79, 155, 232, 0.10), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 75% 65%, rgba(26, 110, 106, 0.12), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 60% 20%, rgba(14, 74, 138, 0.14), transparent 70%),
+    #0a0a10;
   display: none;
 }
 

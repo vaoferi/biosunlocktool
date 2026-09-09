@@ -117,7 +117,11 @@ try {
   if (fallback) { fallback.style.display = "block"; fallback.style.opacity = "1"; }
   throw e;
 }
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// Обмеження DPR: слабкі телефони мають DPR 2.5–3.4 — рендер у фізичних пікселях множить
+// фрагментну нагрузку в ~7–11 разів проти CSS-пікселів. Фон — м'який fbm-градієнт,
+// різниця 1.5 vs 3 непомітна оком. Це ручка продуктивності для слабких пристроїв, не баг.
+const MAX_DPR = 1.5;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x0a0a10, 1);
 app.appendChild(renderer.domElement);
@@ -149,13 +153,48 @@ function renderFrame(tSec) {
 
 renderFrame(0);
 
-if (!reducedMotion) {
-  let rafId = null;
-  function animate() {
+// Слабкі пристрої/мережі: анімація фону — найдорожчий постійний процес сторінки.
+// Пауза, коли вона нікому не видима:
+// 1) вкладка в фоні — rAF сам стопориться, але явний cancel надійніший;
+// 2) hero з фігурами прокручений за межі екрана (він 100vh на всіх брейкпоінтах, див. CSS) —
+//    фон під контентом усе одно перекритий скляними секціями, кадри марні.
+// Обидві умови через один стан: кадр іде лише коли offscreenCount === 0 і вкладка видима.
+let offscreenCount = 0;
+let rafId = null;
+
+function setRunning(run) {
+  if (run && rafId === null) {
     rafId = requestAnimationFrame(animate);
-    renderFrame(performance.now() * 0.001 * TIME_SCALE);
+  } else if (!run && rafId !== null) {
+    cancelAnimationFrame(rafId);
+    rafId = null;
   }
-  animate();
+}
+
+function animate() {
+  rafId = requestAnimationFrame(animate);
+  renderFrame(performance.now() * 0.001 * TIME_SCALE);
+}
+
+if (!reducedMotion) {
+  document.addEventListener("visibilitychange", () => {
+    setRunning(!document.hidden && offscreenCount === 0);
+  });
+
+  const hero = document.querySelector(".hero");
+  if (hero && "IntersectionObserver" in window) {
+    new IntersectionObserver(
+      (entries) => {
+        offscreenCount = entries[0].isIntersecting ? 0 : 1;
+        setRunning(!document.hidden && offscreenCount === 0);
+        // Пауза може тривати хвилини скролу нижче hero: наступний кадр бере свіжий
+        // performance.now(), тож час не «стрибкає» наперед після повернення нагору.
+      },
+      { threshold: 0.05 }
+    ).observe(hero);
+  }
+
+  setRunning(true);
 
   window.addEventListener("beforeunload", () => {
     if (rafId !== null) cancelAnimationFrame(rafId);
@@ -166,6 +205,6 @@ if (!reducedMotion) {
 
 window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
   renderFrame(reducedMotion ? 0 : performance.now() * 0.001 * TIME_SCALE);
 });

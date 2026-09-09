@@ -14,6 +14,13 @@
   <meta name="twitter:card" content="summary">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Слабкі мережі: preload основних шрифтів (latin-підмножини з css2 API, версії v9/v23 —
+       при оновленні версій Google Fonts URL міняються; перевіряти curl-ом, інакше preload
+       дає 404 у консолі). display=swap уже є, тому текст видимий одразу навіть без preload. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsH8ahuQ2e8.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="https://fonts.gstatic.com/s/archivoblack/v23/HTxqL289NzCGg4MzN6KJ7eW6CYyF_jzx13E.woff2">
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter+Tight:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <!-- Phosphor CDN прибрано: був потрібен один іконка, а CDN тягнув 6 stylesheets.
        Іконка замінена інлайн SVG у стилі решти іконок сторінки. -->
@@ -452,15 +459,16 @@
     </footer>
   </div>
 
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.166.1/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.166.1/examples/jsm/"
-      }
-    }
-  </script>
+  <!-- Слабкі мережі: three.js вендорений локально (three@0.166.1, офіційна min-збірка, MIT).
+       Раніше тягнувся з unpkg: третій-сторонній CDN = мінлива латентність на 3G і глухий фон,
+       коли CDN повільний/недоступний. addons не використовуються (мінімальний пайплайн).
+       Оновлювати вручну разом із перевіркою фону в Safari (див. background.js). -->
+  <!-- preload фону: головний скрипт починає завантаження одразу, не чекаючи CSS+парсинг,
+       перший кадр фону з'являється раніше на слабких пристроях. -->
+  <link rel="preload" as="script" href="assets/js/vendor/three.module.min.js">
   <script type="module" src="assets/js/background.js"></script>
+  <!-- Немає modulepreload для vendor/three.module.min.js: import у background.js і так
+       стартує одразу при парсингу; через місцевий шлях резолвиться так само швидко. -->
 
   <script>
     // Бургер-меню: кнопка керує aria-expanded, панель ховається класом .open.
@@ -562,8 +570,7 @@
         if (tg) tg.focus({ preventScroll: true });
       });
     })();
-  </script>
-  <script>
+
     // Передібір продукту: клік по картці (data-pick) підсвічує відповідний тариф у buy-блоці.
     // Без цього коментар над картками обіцяв би функцію, якої не існує (2026-09-09).
     (function () {
