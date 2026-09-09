@@ -16,6 +16,11 @@
 
 # OG-банер: скрейпери (Telegram/FB) кешують og:image дуже агресивно — короткий TTL,
 # щоб регенерація банера дійшла до превʼю без багатогодинного застарілого edge-кешу.
+# ВЕРИФІКОВАНО 2026-09-09: на pages.dev правило діє (3600). На КОСТОМНОМУ домені
+# зона Cloudflare з Browser Cache TTL (дефолт 4 год) перезаписує короткі max-age на
+# 14400 (vendor вцілів завдяки immutable, HTML — бо max-age=0). Не «лагодити» додаванням
+# immutable сюди — це пастка інциденту 2026-09-09. Єдиний фікс: дашборд → Caching →
+# Browser Cache TTL → Respect Existing Headers (потрібен доступ до зони).
 /og-cover.jpg
   Cache-Control: public, max-age=3600, must-revalidate
 
