@@ -1,0 +1,10 @@
+[[routes]]
+pattern = "https://*.biosunlocktool.com/*"
+script = "biosunlocktool"
+
+[[routes]]
+pattern = "https://biosunlocktool.com/*"
+script = "biosunlocktool"
+
+[env.production]
+NODE_VERSION = "18"

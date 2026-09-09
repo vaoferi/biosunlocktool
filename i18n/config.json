@@ -1,0 +1,11 @@
+{
+  "name": "BiosUnlockTool Monorepo",
+  "description": "Cross-cultural landing pages for BIOS unlock service",
+  "locales": {
+    "us": { "label": "en-US", "name": "United States" },
+    "in": { "label": "en-IN", "name": "India" },
+    "de": { "label": "de-DE", "name": "Germany" },
+    "pl": { "label": "pl-PL", "name": "Poland" },
+    "af": { "label": "af-ZA", "name": "Africa" }
+  }
+}

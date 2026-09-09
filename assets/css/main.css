@@ -1,0 +1,242 @@
+/* Base Styles */
+:root {
+  --color-primary: #0e4a8a;
+  --color-secondary: #0a3d6b;
+  --color-accent: #5a9ff0;
+  --color-bg: #0a0a12;
+  --color-text: #ffffff;
+  --color-text-light: #a0a0b0;
+  --font-primary: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-primary);
+  background: var(--color-bg);
+  color: var(--color-text);
+  overflow-x: hidden;
+}
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 50%, #0a3d6b 0%, transparent 50%),
+              radial-gradient(circle at 80% 30%, #0d5c5c 0%, transparent 50%);
+  isolation: isolate;
+}
+
+.wave-glow {
+  position: fixed;
+  top: -50px;
+  left: -50px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(122,139,52,0.1) 0%, transparent 70%);
+  filter: blur(80px);
+  animation: pulse 6s ease infinite;
+  z-index: 0;
+}
+
+.wave-glow.b {
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(10,58,107,0.1) 0%, transparent 70%);
+  animation-delay: -2s;
+  z-index: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.2); }
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background: rgba(10, 10, 18, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.header .logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.logo-text .accent {
+  color: var(--color-accent);
+}
+
+.nav a {
+  color: var(--color-text-light);
+  text-decoration: none;
+  margin-left: 24px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav a:hover {
+  color: var(--color-text);
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 80px 24px 60px;
+  position: relative;
+  z-index: 10;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700;
+  margin-bottom: 24px;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+.code-form {
+  display: flex;
+  max-width: 560px;
+  margin: 0 auto 16px;
+  gap: 12px;
+}
+
+.code-form input {
+  flex: 1;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.code-form button {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.code-form button:hover {
+  opacity: 0.9;
+}
+
+.note {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  margin-bottom: 20px;
+}
+
+/* How It Works */
+.how-it-works {
+  text-align: center;
+  padding: 60px 24px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.how-it-works h2 {
+  font-size: 1.8rem;
+  margin-bottom: 40px;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.step {
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+/* FAQ */
+.faq {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+.faq h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+}
+
+.faq-item {
+  margin-bottom: 24px;
+}
+
+.faq-item h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.faq-item p {
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 32px 24px;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: 16px 24px;
+  }
+  
+  .code-form {
+    flex-direction: column;
+  }
+  
+  .steps {
+    gap: 20px;
+  }
+  
+  .how-it-works {
+    padding: 40px 16px;
+  }
+  
+  .hero {
+    padding: 60px 16px 40px;
+  }
+}
