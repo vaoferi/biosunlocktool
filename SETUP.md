@@ -19,7 +19,9 @@
 ## Крок 2 — перший деплой (1 клік)
 
 1. GitHub → **Actions** → «Deploy to Cloudflare Pages» → **Run workflow** (гілка `main`).
-2. Дочекайся зеленої галочки — у Cloudflare з'явиться Pages-проєкт **`biosunlocktool`** (Action створює його сам, у Dashboard нічого створювати не треба).
+2. Дочекайся зеленої галочки — воркфлоу сам створює Pages-проєкт **`biosunlocktool`** (крок «Ensure Pages project exists») і деплоїть канон. Прев'ю буде на `biosunlocktool.pages.dev`.
+
+> Якщо запуск впав — дивись лог у Actions; найчастіші причини: секрет `CF_API_TOKEN` не заданий або без права **Account → Cloudflare Pages → Edit**.
 
 ## Крок 3 — домени (після першого деплою)
 
