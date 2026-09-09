@@ -1,9 +1,11 @@
-import * as THREE from "./vendor/three.module.min.js";
+import * as THREE from "./vendor/three.module.min.js?v=20260909a";
 
 // ВАЖЛИВО: шлях явний (відносний), без importmap — importmap прибрали, коли вендорили
 // three локально. Голий специфікатор "three" без importmap кидає
 // "Failed to resolve module specifier" → модуль не стартує → фон назавжди статичний
 // (саме це вже сталося 2026-09-09). Не «спрощувати» назад без повернення importmap.
+// ?v= у import — ТОЙ САМИЙ версійний штамп, що в index.html (preload там має збігатись
+// з URL цього import, інакше preload марний). Канонічний css/js змінено → штамп піднято.
 
 // Важливо: це навмисно МІНІМАЛЬний пайплайн (1 quad + 1 shader, без EffectComposer/bloom/spotlight).
 // Попередня версія з composer + spotlight-проєкцією ламалась у WebKit/Safari
