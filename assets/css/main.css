@@ -1,242 +1,534 @@
-/* Base Styles */
+/* BIOS ZONE — American Landing (en-US)
+   Polish: WCAG AA contrast, full responsive coverage */
 :root {
-  --color-primary: #0e4a8a;
-  --color-secondary: #0a3d6b;
-  --color-accent: #5a9ff0;
-  --color-bg: #0a0a12;
-  --color-text: #ffffff;
-  --color-text-light: #a0a0b0;
-  --font-primary: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg: #0e0e12;
+  --text: #f5f5fa;
+  --text-2: #b8b8c8;
+  --mute: #a0a0b0;
+  /* Скляні поверхні: токен затемнено (0.06 → 0.045) — більше «скла», менше «молока».
+     Пакет за побажанням користувача (2026-09-09): +5–10% затемнення кожній скляній
+     поверхні, посилений blur (матовість), text-shadow на текстах скла. */
+  --card: rgba(255, 255, 255, 0.045);
+  --card-border: rgba(255, 255, 255, 0.12);
+  /* Єдиний рецепт скла (2026-09-09, за побажанням): хедер, розкритий акордеон і футер
+     мають ІДЕНТИЧНІ прозорість/матовість/тінь. Міняти «скло» — тільки тут. */
+  --glass-bg: rgba(14, 14, 18, 0.45);
+  --glass-blur: 28px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --accent: #5a9ff0;
+  --accent-2: #1a6e6a;
+  --font: "Inter Tight", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Archivo Black", sans-serif;
+  --font-serif: "Instrument Serif", serif;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: var(--font-primary);
-  background: var(--color-bg);
-  color: var(--color-text);
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
   overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Браузерні поверхні під світ свій design-системи, не дефолти */
+::selection { background: rgba(90, 159, 240, 0.35); color: var(--text); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after,
+  .char-f::before, .char-f::after, .char-c::before { animation: none; }
+  .btn-buy, .btn-telegram, .btn-paypal, .btn-tg, .clay-card, .nav-pill, .nav-pills { transition: none; }
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+/* Тіні під текстом скла: hero-заголовок, заголовки секцій, eyebrow, картки продуктів,
+   кроки, summary гайдів, buy-блок. М'яка широка тінь (не обведення) — текст читається
+   поверх анімованого фону і скла без візуального «бруду». За побажанням (2026-09-09). */
+.title, .section-title, .eyebrow, .product h3, .product p, .step-item, .guide summary, .guide-body, .guide-body h3, .buy-card h2, .buy-card p, .site-footer {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+}
+
+#bg-three { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+#bg-three canvas { display: block; width: 100% !important; height: 100% !important; }
+#bg-fallback {
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a10 100%);
+  display: none;
 }
 
 .page {
-  position: relative;
-  min-height: 100vh;
-  background: radial-gradient(circle at 20% 50%, #0a3d6b 0%, transparent 50%),
-              radial-gradient(circle at 80% 30%, #0d5c5c 0%, transparent 50%);
-  isolation: isolate;
+  position: relative; z-index: 1;
+  max-width: 1200px; margin: 0 auto;
+  padding: 24px clamp(16px, 4vw, 48px) 60px;
 }
 
-.wave-glow {
-  position: fixed;
-  top: -50px;
-  left: -50px;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(122,139,52,0.1) 0%, transparent 70%);
-  filter: blur(80px);
-  animation: pulse 6s ease infinite;
-  z-index: 0;
-}
-
-.wave-glow.b {
-  top: -100px;
-  right: -100px;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(10,58,107,0.1) 0%, transparent 70%);
-  animation-delay: -2s;
-  z-index: 0;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.3; transform: scale(1.2); }
-}
-
-/* Header */
+/* HEADER */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 48px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  background: rgba(10, 10, 18, 0.7);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky; top: 12px; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 12px 16px;
+  background: var(--glass-bg); /* єдиний рецепт скла (див. :root): 0.45 затверджено користувачем */
+  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--card-border); border-radius: 999px;
+  margin-bottom: 32px; box-shadow: var(--glass-shadow);
 }
 
-.header .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+.logo { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo-mark {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #0e4a8a, #0d3d3d);
+  border-radius: 10px; display: grid; place-items: center; color: white;
+}
+.logo-mark svg { width: 20px; height: 20px; }
+.logo-text { display: flex; flex-direction: column; line-height: 1; }
+.logo-text .a { font-family: var(--font-display); font-size: 15px; }
+.logo-text .b { font-size: 11px; color: var(--mute); margin-top: 2px; }
+
+.nav-pills { display: flex; gap: 4px; flex: 1; justify-content: center; }
+.nav-pill {
+  padding: 8px 16px; border-radius: 999px;
+  font-size: 14px; font-weight: 500; color: var(--text-2);
+  transition: all 0.2s;
+}
+.nav-pill:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+.nav-pill.active { background: white; color: #000; }
+
+/* Бургер: прихований на десктопі, з'являється коли меню не вміщається */
+.nav-toggle {
+  display: none; position: relative; z-index: 101;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); border: 1px solid var(--card-border);
+  flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  flex-shrink: 0; transition: background 0.2s;
+}
+.nav-toggle:hover { background: rgba(255,255,255,0.15); }
+.nav-toggle .bar {
+  display: block; width: 16px; height: 2px; border-radius: 2px;
+  background: var(--text); transition: transform 0.25s ease;
+}
+.nav-toggle[aria-expanded="true"] .bar:nth-child(1) { transform: translateY(3.5px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .bar:nth-child(2) { transform: translateY(-3.5px) rotate(-45deg); }
+
+.header-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 6px 6px 18px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border); border-radius: 999px;
+  transition: all 0.2s;
+}
+.header-cta:hover { background: rgba(255,255,255,0.12); }
+.cta-dot {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: white; color: #000; display: grid; place-items: center;
+}
+.cta-dot svg { width: 14px; height: 14px; }
+.cta-text { font-size: 14px; font-weight: 500; }
+
+/* HERO */
+/* 32→56 (2026-09-09): користувач — «низ hero занадто близько до краю видимого екрана».
+   Рядок довіри (.hero-trust) видував секцію вниз. Те саме значення в @media ≤900 нижче. */
+.hero { padding: 24px 0 56px; }
+
+.hero-trust {
+  margin-top: 16px; font-size: 14px; color: var(--mute); letter-spacing: 0.01em;
 }
 
-.logo-text .accent {
-  color: var(--color-accent);
+.eight-shape {
+  display: flex; align-items: center; justify-content: center;
+  gap: 20px; margin: 0 auto 20px; max-width: 700px;
 }
 
-.nav a {
-  color: var(--color-text-light);
-  text-decoration: none;
-  margin-left: 24px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: color 0.2s;
+.char { position: relative; width: 92px; height: 158px; flex-shrink: 0; }
+
+/* Dark figure-8 gradients for contrast */
+.char-8::before, .char-8::after,
+.char-8-mirror::before, .char-8-mirror::after {
+  content: ''; position: absolute;
+  width: 92px; height: 92px; border-radius: 50%;
+  background: conic-gradient(#0e4a8a, #0d3d3d, #0e4a8a);
+  mask-image: linear-gradient(transparent 28%, black 38%);
+  -webkit-mask-image: linear-gradient(transparent 28%, black 38%);
 }
 
-.nav a:hover {
-  color: var(--color-text);
-}
+.char-8::before, .char-8-mirror::before { top: 0; transform: scaleY(-1); }
+.char-8::after, .char-8-mirror::after { bottom: 0; }
 
-/* Hero */
-.hero {
-  text-align: center;
-  padding: 80px 24px 60px;
-  position: relative;
-  z-index: 10;
-}
+.char-8::before { animation: eightBreath 4s ease-in-out infinite; }
+.char-8::after { animation: eightBreath 4s ease-in-out infinite reverse; }
+.char-8-mirror::before { animation: eightBreath 4s ease-in-out infinite reverse; }
+.char-8-mirror::after { animation: eightBreath 4s ease-in-out infinite; }
 
-.hero h1 {
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 700;
-  margin-bottom: 24px;
-  line-height: 1.15;
-  letter-spacing: -0.5px;
-}
-
-.subtitle {
-  font-size: 1.1rem;
-  color: var(--color-text-light);
-  max-width: 600px;
-  margin: 0 auto 40px;
-  line-height: 1.6;
-}
-
-.code-form {
-  display: flex;
-  max-width: 560px;
-  margin: 0 auto 16px;
-  gap: 12px;
-}
-
-.code-form input {
-  flex: 1;
-  padding: 14px 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* F: жирні пропорції (стійка 32px, рамени 32px) — вибір користувача «Жирна»,
+   щоб фігура важила поруч із круглими 8/C. Товщини узгоджені з .char у всіх
+   брейкпоінтах — якщо міняєш .char, онови і тут, і в @media 1400/768/480/360. */
+.char-f::before {
+  content: ''; position: absolute;
+  left: 30px; top: 16px; width: 32px; height: 126px;
+  background: linear-gradient(#0e4a8a, #0d3d3d);
   border-radius: 8px;
-  color: var(--color-text);
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  animation: eightBreath 4s ease-in-out infinite reverse;
 }
 
-.code-form button {
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 0 28px;
+.char-f::after {
+  content: ''; position: absolute;
+  left: 30px; top: 16px; width: 56px; height: 32px;
+  background: linear-gradient(#0e4a8a, #0d3d3d);
   border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-  white-space: nowrap;
+  box-shadow: 0 62px 0 #0d3d3d;
+  animation: eightBreath 4s ease-in-out infinite;
 }
 
-.code-form button:hover {
-  opacity: 0.9;
+.char-c::before {
+  content: ''; position: absolute;
+  left: 8px; top: 8px; width: 76px; height: 142px;
+  border-radius: 50%;
+  /* C як жирна дуга: конус малює колір + клиновий рот праворуч (0° = вгору,
+     90° = праворуч; рот 64–116°), радіальна маска вибирає отвір.
+     ВАЖЛИВО (тут уже було зламано): в radial-gradient(ellipse W H) W і H — це
+     РАДІУСИ отвору, не його розміри! Отвір 12×78px при коробці 76×142 =
+     радіуси 7.9% × 27.5%. Колись записали розміри як радіуси (52.6%/73.2%) —
+     отвір став 80×208, більший за фігуру, і C ПОВНІСТЮ зникла з продакшну.
+     Перевірка: радіус ≤ 50% відповідної сторони коробки.
+     Товщина кільця 32px = стійка F (вибір користувача «жирна як F»).
+     Якщо міняєш кути рота або маску — дивись фігуру наживо на проді. */
+  background: conic-gradient(from 0deg,
+    #0d3d3d 0deg, #0e4a8a 62deg,
+    transparent 64deg 116deg,
+    #0e4a8a 118deg, #0d3d3d 300deg,
+    #0e4a8a 356deg, #0d3d3d 360deg);
+  mask-image: radial-gradient(ellipse 7.9% 27.5% at 50% 50%, transparent 97%, black 100%);
+  -webkit-mask-image: radial-gradient(ellipse 7.9% 27.5% at 50% 50%, transparent 97%, black 100%);
+  animation: eightBreath 4s ease-in-out infinite;
 }
 
-.note {
-  font-size: 0.85rem;
-  color: var(--color-text-light);
-  margin-bottom: 20px;
+@keyframes eightBreath {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.04) translateY(-5px); }
 }
 
-/* How It Works */
-.how-it-works {
-  text-align: center;
-  padding: 60px 24px;
-  background: rgba(0, 0, 0, 0.2);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+/* HERO TEXT */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; letter-spacing: 0.04em; color: var(--text-2);
+  margin-bottom: 12px;
+}
+.eyebrow::before { content: ""; display: inline-block; width: 10px; height: 1px; background: currentColor; }
+.eyebrow::after { content: ""; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: currentColor; margin-left: 4px; }
+
+.title {
+  font-family: var(--font-display);
+  /* line-height ~1.02: заголовок має триматись в 1 екран разом з CTA.
+     Якщо збільшувати — перевіряти, що hero не виїжджає за перший viewport. */
+  font-size: clamp(40px, 8vw, 96px);
+  line-height: 1.02; letter-spacing: -0.03em; margin: 0 0 14px;
+  display: flex; flex-direction: column; align-items: flex-start;
+}
+.title-line { display: block; }
+
+/* Пояснення і список моделей — окремий рядок body-масштабу під заголовком,
+   НЕ всередині h1: дрібний текст між гігантськими дужками читався погано. */
+.hero-sub {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 8px 20px; margin: 0 0 20px; max-width: 62ch;
+}
+.title-desc {
+  font-family: var(--font);
+  font-size: clamp(14px, 1.2vw, 16px); font-weight: 400;
+  color: var(--text-2); letter-spacing: 0; line-height: 1.5;
+  text-transform: none; margin: 0;
+}
+.hero-models {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--mute); font-weight: 500;
+}
+.hero-models .models-icon { width: 15px; height: 15px; color: var(--accent); flex-shrink: 0; }
+.hero-models .paren { color: var(--mute); font-weight: 400; }
+
+.hero-cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+
+.btn-buy {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 14px 28px;
+  background: #0e4a8a;
+  border-radius: 999px; color: white; font-weight: 600;
+  font-size: 16px; transition: all 0.2s; box-shadow: none;
+  min-width: 190px; justify-content: center; /* пара з btn-telegram однакового розміру */
+}
+.btn-buy:hover { transform: translateY(-2px); }
+.buy-label { font-family: var(--font-display); }
+.btn-buy svg { width: 18px; height: 18px; flex-shrink: 0; } /* PayPal-значок: той самий розмір, що іконка Telegram */
+
+.btn-telegram {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; /* = btn-buy: кнопки пари однакового розміру (2026-09-09) */
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); /* матовість, як у скляних карток */
+  border: 1px solid var(--card-border);
+  border-radius: 999px; color: white; font-weight: 500;
+  font-size: 16px; transition: all 0.2s;
+  min-width: 190px; justify-content: center; /* пара з btn-buy однакового розміру */
+}
+.btn-telegram:hover { background: rgba(255,255,255,0.15); }
+.btn-telegram svg { width: 18px; height: 18px; }
+
+/* PRODUCTS */
+.products { margin: 34px 0; }
+.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.clay-card {
+  background: var(--card); border: 1px solid var(--card-border);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); /* матовість карток продуктів/гайдів/buy */
+  border-radius: 20px; padding: 28px; transition: all 0.3s;
+}
+.clay-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-4px); }
+.product.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 8px 32px rgba(0,0,0,0.4); }
+
+.prod-icon {
+  width: 48px; height: 48px; background: rgba(255,255,255,0.08);
+  border-radius: 12px; display: grid; place-items: center; margin-bottom: 16px;
+}
+.prod-icon svg { width: 22px; height: 22px; color: var(--accent); }
+
+.product h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+.product p { font-size: 15px; color: var(--text-2); margin-bottom: 16px; line-height: 1.6; }
+.price { font-family: var(--font-display); font-size: 22px; color: var(--accent); }
+
+/* SECTION TITLES — зменшено (42px було завелико для внутрішніх секцій); відступ знижено 24→16px */
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.6vw, 28px);
+  margin-bottom: 16px; letter-spacing: -0.02em;
 }
 
-.how-it-works h2 {
-  font-size: 1.8rem;
-  margin-bottom: 40px;
+.steps { margin: 34px 0; }
+.step-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+.step-item {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  text-align: center; padding: 24px 16px;
+  background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); /* матовість кроків */
+  font-size: 15px; font-weight: 500; color: var(--text);
+}
+.step-item .n {
+  width: 36px; height: 36px;
+  background: #0e4a8a;
+  border-radius: 50%; display: grid; place-items: center;
+  font-weight: 700; color: white;
 }
 
-.steps {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  flex-wrap: wrap;
+/* BUY SECTION */
+.buy-section { margin: 34px 0; }
+.buy-card { text-align: center; padding: 40px 32px; }
+.buy-card h2 { font-family: var(--font-display); font-size: 28px; margin-bottom: 8px; }
+.buy-card p { color: var(--text-2); margin-bottom: 24px; font-size: 16px; }
+.pay-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+.btn-paypal {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; background: #0070ba; color: white;
+  border-radius: 999px; font-weight: 600; font-size: 16px; transition: all 0.2s;
+}
+.btn-paypal:hover { background: #005ea6; transform: translateY(-2px); }
+.btn-paypal svg { width: 18px; height: 18px; }
+
+.btn-tg {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; background: #0066aa; color: white;
+  border-radius: 999px; font-weight: 600; font-size: 16px; transition: all 0.2s;
+}
+.btn-tg:hover { background: #005588; transform: translateY(-2px); }
+.btn-tg svg { width: 18px; height: 18px; }
+
+/* FAQ-секцію видалено (гайди покривають ті питання); стилі .faq прибрано 2026-09-08 */
+
+/* RELATED GUIDES — accordion */
+.related-guides { margin: 34px 0; }
+.guides-note { color: var(--text-2); font-size: 14px; margin: -12px 0 20px; }
+
+.guide { margin-bottom: 12px; }
+.guide summary {
+  font-weight: 600; font-size: 16px; padding: 6px 0;
+  list-style: none; cursor: pointer; color: var(--text);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after {
+  content: '+'; font-family: var(--font-display); font-size: 20px;
+  color: var(--accent); flex-shrink: 0; transition: transform 0.2s; line-height: 1;
+}
+.guide[open] summary::after { transform: rotate(45deg); }
+.guide[open] summary { color: var(--accent); }
+
+/* Розкритий акордеон: скло ІДЕНТИЧНЕ хедеру (var(--glass-bg), рішення користувача 2026-09-09).
+   Правило стоїть ПІСЛЯ .clay-card:hover, інакше hover (rgba 255 0.1) перекриє фон відкритої картки. */
+.guide[open] {
+  /* Історія значень: 0.85 → 0.92 («щоб добре читалось») → 0.45 (уніфікація зі склом хедера).
+     Якщо текст у розкритому гайді стане важко читати — повернення: rgba(13, 13, 17, 0.92) тут і нижче. */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
 }
 
-.step {
-  font-size: 1.1rem;
-  color: var(--color-text-light);
-  font-weight: 500;
+.guide-body { padding-top: 12px; color: var(--text-2); font-size: 15px; line-height: 1.7; }
+
+/* Плавне розкриття: JS анімує grid-template-rows 0fr->1fr (клас .expanding),
+   той самий viewBox що й у розкритої картки. Поки триває анімація, [open]-стилі
+   (фон/тінь) застосовуються через клас .expanding — інакше фон "стрибав" би на кадр раніше висоти.
+   overflow:hidden тримає вміст прихованим під час стиснення. Не "спрощувати" до display-toggle —
+   це і є причина стрибків висоти сторінки без анімації. */
+.guide .guide-wrap {
+  display: grid; grid-template-rows: 0fr;
+  overflow: hidden;
+  transition: grid-template-rows 0.32s ease;
+}
+.guide.open .guide-wrap { grid-template-rows: 1fr; }
+.guide.open > summary::after { transform: rotate(45deg); }
+.guide.open > summary { color: var(--accent); }
+.guide.open, .guide.expanding {
+  /* Той самий рецепт, що .guide[open] вище — тримати синхронно (див. історію значень там). */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
+}
+.guide { transition: background 0.32s ease, box-shadow 0.32s ease; }
+.guide-body h3 {
+  font-family: var(--font-display); font-size: 15px; letter-spacing: 0.01em;
+  color: var(--text); margin: 18px 0 8px;
+}
+.guide-body p { margin: 0 0 12px; }
+.guide-body ul { margin: 0 0 12px; padding-left: 20px; }
+.guide-body li { margin-bottom: 8px; }
+.guide-body strong { color: var(--text); font-weight: 600; }
+.guide-body a { color: var(--accent); font-weight: 600; }
+.guide-body a:hover { text-decoration: underline; }
+
+/* Статус оплати: inline під кнопками, роль=status для скрін-рідерів */
+.pay-note {
+  margin: 16px auto 0; max-width: 40ch;
+  color: var(--text-2); font-size: 14px; line-height: 1.6;
+  padding: 10px 16px; border: 1px solid var(--card-border); border-radius: 12px;
+  background: rgba(90, 159, 240, 0.08);
 }
 
-/* FAQ */
-.faq {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 80px 24px;
+/* CTA-блок після гайдів: скло в мові решти карток (var(--card) + blur(10px)) */
+.after-guides-cta {
+  margin-top: 24px; padding: 32px; text-align: center;
+  background: var(--card); border: 1px solid var(--card-border); border-radius: 20px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.after-guides-cta h2 { font-family: var(--font-display); font-size: 22px; margin-bottom: 8px; }
+.after-guides-cta p { color: var(--text-2); margin-bottom: 20px; }
+
+/* FOOTER */
+.site-footer strong { color: var(--text); font-weight: 600; }
+.site-footer a { text-decoration: underline; text-underline-offset: 3px; }
+.site-footer a:hover { color: var(--text); }
+.site-footer {
+  /* Скло ідентичне хедеру (2026-09-09): той самий фон/матовість/тінь, форма — карткова (20px). */
+  text-align: center; padding: 24px 28px 20px; color: var(--mute);
+  font-size: 13px; border: 1px solid var(--card-border); border-radius: 20px; margin-top: 40px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
+}
+.site-footer p + p { margin-top: 8px; }
+
+/* RESPONSIVE — Desktop wide */
+@media (min-width: 1400px) {
+  .page { max-width: 1320px; padding: 32px 48px 80px; }
+  .char { width: 118px; height: 200px; }
+  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 118px; height: 118px; }
+  .char-f::before { left: 39px; top: 20px; width: 40px; height: 160px; }
+  .char-f::after { left: 39px; top: 20px; width: 70px; height: 40px; box-shadow: 0 80px 0 #0d3d3d; }
+  .char-c::before { width: 100px; height: 172px; }
 }
 
-.faq h2 {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 40px;
+/* RESPONSIVE — Tablet landscape */
+@media (max-width: 1100px) {
+  .header-cta .cta-text { display: none; }
+  .header-cta { padding: 6px; }
 }
 
-.faq-item {
-  margin-bottom: 24px;
+/* RESPONSIVE — Tablet portrait: меню ховається, з'являється бургер.
+   Панель — випадаючий список під хедером (absolute, не штовхає контент). */
+@media (max-width: 900px) {
+  .nav-toggle { display: inline-flex; order: 2; margin-left: auto; }
+  .header-cta { order: 3; }
+  .nav-pills {
+    /* Панель НЕ display:none↔flex (миттєве показ/ховання), а завжди в дереві:
+       absolute не штовхає контент, visibility:hidden прибирає з таб/скрінрідера.
+       Це дає справжню двосторонню fade+slide анімацію; JS і клас .open не змінені.
+       visibility transition: при хованні спрацьовує ПІСЛЯ fade (delay 0.25s),
+       інакше панель зникла б миттєво до анімації. */
+    display: flex;
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+    flex-direction: column; gap: 4px; padding: 10px;
+    background: rgba(14, 14, 18, 0.98); /* +1%: панель і так майже суцільна, посилено тільки blur (28px) */
+    backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); /* матовість панелі — узгоджено з хедером */
+    border: 1px solid var(--card-border); border-radius: 24px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    opacity: 0; transform: translateY(-8px);
+    visibility: hidden; pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+  .nav-pills.open {
+    opacity: 1; transform: translateY(0);
+    visibility: visible; pointer-events: auto;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s;
+  }
+  .nav-pill { padding: 12px 18px; font-size: 15px; text-align: left; }
+  .products-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .step-row { grid-template-columns: repeat(2, 1fr); max-width: 500px; margin-left: auto; margin-right: auto; }
+  .guides-grid { grid-template-columns: repeat(2, 1fr); }
+  .title { font-size: clamp(34px, 7vw, 56px); }
+  .hero { padding: 24px 0 56px; }
 }
 
-.faq-item h3 {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
-}
-
-.faq-item p {
-  color: var(--color-text-light);
-  line-height: 1.6;
-}
-
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 32px 24px;
-  color: var(--color-text-light);
-  font-size: 0.85rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Responsive */
+/* RESPONSIVE — Mobile large */
 @media (max-width: 768px) {
-  .header {
-    padding: 16px 24px;
-  }
-  
-  .code-form {
-    flex-direction: column;
-  }
-  
-  .steps {
-    gap: 20px;
-  }
-  
-  .how-it-works {
-    padding: 40px 16px;
-  }
-  
-  .hero {
-    padding: 60px 16px 40px;
-  }
+  .page { padding: 16px 16px 40px; }
+  .header { top: 8px; margin-bottom: 24px; padding: 10px 14px; }
+  .logo-text { display: none; }
+  .eight-shape { gap: 16px; }
+  .char { width: 90px; height: 160px; }
+  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 90px; height: 90px; }
+  .char-f::before { left: 30px; width: 30px; height: 128px; }
+  .char-f::after { left: 30px; width: 54px; height: 30px; box-shadow: 0 68px 0 #0d3d3d; }
+  .char-c::before { width: 70px; height: 140px; }
+  .products-grid { gap: 16px; }
+  .buy-card { padding: 32px 24px; }
+  .pay-row { flex-direction: column; align-items: center; }
+  .btn-paypal, .btn-tg { width: 100%; justify-content: center; }
+}
+
+/* RESPONSIVE — Mobile small */
+@media (max-width: 480px) {
+  .step-row { grid-template-columns: 1fr; }
+  .guides-grid { grid-template-columns: 1fr; }
+  .hero-cta-row { flex-direction: column; }
+  .btn-buy, .btn-telegram { width: 100%; justify-content: center; }
+  .eight-shape { gap: 10px; }
+  .char { width: 70px; height: 130px; }
+  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 70px; height: 70px; }
+  .char-f::before { left: 23px; width: 24px; height: 106px; }
+  .char-f::after { left: 23px; width: 42px; height: 24px; box-shadow: 0 58px 0 #0d3d3d; }
+  .char-c::before { width: 55px; height: 110px; }
+  .clay-card { padding: 24px 20px; }
+  .title { letter-spacing: -0.02em; }
+}
+
+/* RESPONSIVE — Very small */
+@media (max-width: 360px) {
+  .eight-shape { gap: 8px; }
+  .char { width: 60px; height: 110px; }
+  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 60px; height: 60px; }
+  .char-f::before { left: 19px; width: 21px; height: 90px; }
+  .char-f::after { left: 19px; width: 37px; height: 21px; box-shadow: 0 48px 0 #0d3d3d; }
+  .char-c::before { width: 45px; height: 90px; }
 }

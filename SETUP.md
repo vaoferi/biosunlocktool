@@ -1,34 +1,46 @@
-# 🚀 Швидка інструкція: створення Pages проєкту
+# 🚀 Запуск бою: biosunlocktool.com на Cloudflare Pages
 
-## Крок 1: GitHub Secrets
-1. Перейди в `github.com/vaoferi/biosunlocktool/settings/secrets/actions`
-2. Додай секрети:
-   - `CF_ACCOUNT_ID` → `ad170d773e79a037e28f4530fd5305a5`
-   - `CF_API_TOKEN` → новий токен з правами `Pages:Edit`
+> Оновлено 2026-09-09. Два ручні кроки у вебі — і далі сайт оновлюється сам з кожним пушем у `main`.
 
-## Крок 2: Створення Pages проєкту
-1. [Cloudflare Dashboard → Workers & Pages → Create application](https://dash.cloudflare.com/ad170d773e79a037e28f4530fd5305a5/workers-and-pages/create)
-2. Обери **"Pages"**
-3. **Select a repository** → `vaoferi/biosunlocktool`
-4. **Build settings**:
-   - Build command: порожньо
-   - Build output directory: `.`
-5. **Save and Deploy**
+## Поточний стан
 
-## Крок 3: Домени (після створення)
-1. **Custom domains** → додай:
-   - `biosunlocktool.com` (root)
-   - `www.biosunlocktool.com`
-   - `in.biosunlocktool.com` → роутить на `locales/en-IN/`
-   - `de.biosunlocktool.com` → роутить на `locales/de-DE/`
-   - `pl.biosunlocktool.com` → роутить на `locales/pl-PL/`
-   - `af.biosunlocktool.com` → роутить на `locales/af-ZA/`
+- ✅ Канонічна сторінка (en-US) лежить у корені репо (`index.html` + `assets/`) — це те, що бачить `biosunlocktool.com`;
+- ✅ `locales/<locale>/` — місце майбутніх мовних копій; `in/de/pl/af` поки заглушки;
+- ✅ GitHub Action `.github/workflows/deploy.yml` деплоїть на Pages при кожному пуші в `main`;
+- ✅ `functions/_middleware.ts` роутить субдомени `in./de./pl./af.` на свої локалі.
 
-## Крок 4: SSL
-1. **SSL/TLS → Overview → Full (strict)**
+## Крок 1 — секрети GitHub (1 хв)
 
-## Автоматичний деплой
-Після пуша в `main` GitHub Action автоматично деплоїт твій сайт на Cloudflare Pages.
+1. Відкрий `github.com/vaoferi/biosunlocktool/settings/secrets/actions`
+2. Додай:
+   - `CF_ACCOUNT_ID` → твій Account ID (dash.cloudflare.com → праворуч на Overview);
+   - `CF_API_TOKEN` → створи токен із правами **Account → Cloudflare Pages → Edit**.
 
----
-⏱️ Час виконання: 3-5 хвилин твого часу.
+## Крок 2 — перший деплой (1 клік)
+
+1. GitHub → **Actions** → «Deploy to Cloudflare Pages» → **Run workflow** (гілка `main`).
+2. Дочекайся зеленої галочки — у Cloudflare з'явиться Pages-проєкт **`biosunlocktool`** (Action створює його сам, у Dashboard нічого створювати не треба).
+
+## Крок 3 — домени (після першого деплою)
+
+1. Dashboard → Workers & Pages → проєкт **biosunlocktool** → **Custom domains** → Set up a custom domain.
+2. Додай: `biosunlocktool.com`, `www.biosunlocktool.com`, `in.`, `de.`, `pl.`, `af.biosunlocktool.com`.
+3. Домен уже в Cloudflare DNS → сертифікат видасться автоматично; CNAME-записи створяться самі.
+
+## Крок 4 — SSL
+
+Dashboard → SSL/TLS → Overview → **Full (strict)**.
+
+## Як оновлювати сайт
+
+Пуш у `main` = автодеплой (1–2 хв). Ручний варіант: `npx wrangler pages deploy . --project-name biosunlocktool`.
+
+## Захисні правила
+
+- **NAS-прод `http://nlmhelp.keenetic.link:18080/` не прибирати** — лишається staging, поки Pages не прийме трафік (ADR у `nexxgsm-design/docs/architecture-decisions.md`).
+- Канон живе в `nexxgsm-design/versions/en-US-landing/`; цей корінь і `locales/en-US/` — його **деплой-копії**. Зміни робити в каноні й копіювати сюди (поки не вирішено питання про автосинхронізацію — відкрите питання в ADR).
+
+## Відкриті питання
+
+- Чи `nexxgsm-design` переїжджає в це монорепо, чи канон залишається в двох місцях з ручним копіюванням — рішення не ухвалене (див. ADR).
+- Точна поведінка апекса і www (редірект/канонічний хост) — уточнити при підключенні доменів.

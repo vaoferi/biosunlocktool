@@ -1,31 +1,16 @@
-// Cloudflare Pages Functions — locale routing
+// Cloudflare Pages Functions — роутинг субдоменів на локалі.
+// Локалі фізично живуть у /locales/<locale>/, тому ПЕРЕЗАПИС шляху через
+// context.next() зі зміненим pathname дав би 404 (такого файлу не існує).
+// Робоче рішення: корінь субдомену — 308-редірект на /locales/<locale>/;
+// решта шляхів і кореневий домен (канонічний en-US із кореня репо) — як є.
 export async function onRequest(context) {
   const url = new URL(context.request.url);
-  const host = url.hostname;
-  const path = url.pathname;
+  const sub = url.hostname.split(".")[0].toLowerCase();
 
-  // Map subdomains to locales
-  const subdomainMap = {
-    'in': 'en-IN',
-    'de': 'de-DE',
-    'pl': 'pl-PL',
-    'af': 'af-ZA'
-  };
+  const localeBySub = { in: "en-IN", de: "de-DE", pl: "pl-PL", af: "af-ZA" };
+  const locale = localeBySub[sub];
+  if (!locale) return context.next(); // apex / www / preview → канон en-US
 
-  // Root domain -> en-US
-  if (host === 'biosunlocktool.com' || host === 'www.biosunlocktool.com') {
-    if (path === '/' || path === '') {
-      return context.next();
-    }
-  }
-
-  // Check subdomain routing
-  const subdomain = host.split('.')[0];
-  if (subdomain && subdomainMap[subdomain]) {
-    url.pathname = `/${subdomainMap[subdomain]}${path}`;
-    return context.next();
-  }
-
-  // Default: serve en-US for root
-  return context.next();
+  if (url.pathname !== "/" && url.pathname !== "") return context.next();
+  return Response.redirect(new URL(`/locales/${locale}/`, url).toString(), 308);
 }

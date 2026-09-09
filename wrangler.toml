@@ -1,35 +1,8 @@
 name = "biosunlocktool"
-main = ".vercel/output/functions/_middleware.js"
-account_id = "ad170d773e79a037e28f4530fd5305a5"
 compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
 
-[vars]
-SITE_NAME = "biosunlocktool.com"
-
-# Custom domains per locale
-[[routes]]
-pattern = "https://in.biosunlocktool.com/*"
-script = "biosunlocktool"
-
-[[routes]]
-pattern = "https://de.biosunlocktool.com/*"
-script = "biosunlocktool"
-
-[[routes]]
-pattern = "https://pl.biosunlocktool.com/*"
-script = "biosunlocktool"
-
-[[routes]]
-pattern = "https://af.biosunlocktool.com/*"
-script = "biosunlocktool"
-
-[[routes]]
-pattern = "https://biosunlocktool.com/*"
-script = "biosunlocktool"
-
-[[routes]]
-pattern = "https://www.biosunlocktool.com/*"
-script = "biosunlocktool"
-
-[triggers]
-crons = ["0 12 * * *"]
+# Pages-конфіг (ВАЖЛИВО: це Pages, а не Workers — тому тут НЕ буває main/routes/[site]/crons;
+# вони належать wrangler.toml для Workers і ламають `wrangler pages deploy`).
+# Домени (apex, www, in./de./pl./af.) підключаються в Dashboard: Pages проєкт → Custom domains.
+# Деплой: GitHub Action (.github/workflows/deploy.yml) на кожен пуш у main.
