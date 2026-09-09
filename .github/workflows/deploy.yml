@@ -16,21 +16,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-      
+          # cache: 'npm' навмисно НЕ ставимо: у репо немає package-lock.json,
+          # а setup-node падає з помилкою, якщо lockfile відсутній.
+
       - name: Install Wrangler
         run: npm install -g wrangler
-      
+
+      - name: Build
+        run: node build.js
+
       - name: Publish to Pages
         uses: cloudflare/pages-action@v1
         with:
           accountId: ${{ env.CF_ACCOUNT_ID }}
-          apiKey: ${{ env.CF_API_TOKEN }}
+          # ВАЖЛИВО: параметр pages-action називається apiToken (не apiKey).
+          apiToken: ${{ env.CF_API_TOKEN }}
           projectName: biosunlocktool
           directory: .
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
