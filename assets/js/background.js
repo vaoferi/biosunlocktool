@@ -1,4 +1,4 @@
-import * as THREE from "./vendor/three.module.min.js?v=20260909a";
+import * as THREE from "./vendor/three.module.min.js?v=20260909b";
 
 // ВАЖЛИВО: шлях явний (відносний), без importmap — importmap прибрали, коли вендорили
 // three локально. Голий специфікатор "three" без importmap кидає
