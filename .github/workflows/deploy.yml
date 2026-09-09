@@ -1,0 +1,36 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    env:
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install Wrangler
+        run: npm install -g wrangler
+      
+      - name: Publish to Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          accountId: ${{ env.CF_ACCOUNT_ID }}
+          apiKey: ${{ env.CF_API_TOKEN }}
+          projectName: biosunlocktool
+          directory: .
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

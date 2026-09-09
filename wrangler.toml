@@ -1,0 +1,35 @@
+name = "biosunlocktool"
+main = ".vercel/output/functions/_middleware.js"
+account_id = "ad170d773e79a037e28f4530fd5305a5"
+compatibility_date = "2024-01-01"
+
+[vars]
+SITE_NAME = "biosunlocktool.com"
+
+# Custom domains per locale
+[[routes]]
+pattern = "https://in.biosunlocktool.com/*"
+script = "biosunlocktool"
+
+[[routes]]
+pattern = "https://de.biosunlocktool.com/*"
+script = "biosunlocktool"
+
+[[routes]]
+pattern = "https://pl.biosunlocktool.com/*"
+script = "biosunlocktool"
+
+[[routes]]
+pattern = "https://af.biosunlocktool.com/*"
+script = "biosunlocktool"
+
+[[routes]]
+pattern = "https://biosunlocktool.com/*"
+script = "biosunlocktool"
+
+[[routes]]
+pattern = "https://www.biosunlocktool.com/*"
+script = "biosunlocktool"
+
+[triggers]
+crons = ["0 12 * * *"]
