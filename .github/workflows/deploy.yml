@@ -48,4 +48,6 @@ jobs:
           apiToken: ${{ env.CF_API_TOKEN }}
           projectName: biosunlocktool
           directory: .
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          # gitHubToken навмисно НЕ передається: зі стандартним GITHUB_TOKEN дія
+          # падає на створенні GitHub Deployment ("Resource not accessible by
+          # integration" — нема права deployments:write), ще ДО завантаження на Pages.
