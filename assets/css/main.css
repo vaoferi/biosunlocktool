@@ -15,6 +15,12 @@
   --glass-bg: rgba(14, 14, 18, 0.45);
   --glass-blur: 28px;
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Палітра фігур «8FC8» — ЄДИНИЙ власник кольорів літер (architect-прохід 2026-09-09,
+     порт оригіналу codepen donotfold «CSS 8»): 8, F і C беруть тони звідси.
+     Міняєш характер літер — міняй тільки ці два значення. */
+  --fig-dark: #0d3d3d;
+  --fig-light: #4f9be8;
   --accent: #5a9ff0;
   --accent-2: #1a6e6a;
   --font: "Inter Tight", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -39,8 +45,10 @@ body {
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after,
+  .char-8, .char-8-mirror,
   .char-f::before, .char-f::after, .char-c::before { animation: none; }
+  /* Вісімки в reduced-motion стають статичними з --close = 15% (initial-value):
+     пояс зафіксований, диски на базових зсувах — фігура повна, руху немає. */
   .btn-buy, .btn-telegram, .btn-paypal, .btn-tg, .clay-card, .nav-pill, .nav-pills { transition: none; }
 }
 
@@ -142,27 +150,54 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .eight-shape {
   display: flex; align-items: center; justify-content: center;
   gap: 20px; margin: 0 auto 20px; max-width: 700px;
+  position: relative; /* для ::after-зерна */
+}
+
+/* Зерно плівки — з оригіналу (feTurbulence + overlay): дає літерам «матеріал».
+   Тільки над рядом фігур; 0.3 замість 0.8 в оригіналі — на темному сайті повна
+   сила додає бруду на тексті hero. pointer-events:none обов'язковий. */
+.eight-shape::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='svgfilter'><feTurbulence type='fractalNoise' baseFrequency='1' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23svgfilter)'/></svg>");
+  mix-blend-mode: overlay; opacity: 0.3;
 }
 
 .char { position: relative; width: 92px; height: 158px; flex-shrink: 0; }
 
-/* Dark figure-8 gradients for contrast */
+/* Механізм «дихання» вісімок — дослівний порт з оригіналу: одна змінна --close керує
+   ОДНОЧАСНО глибиною зрізу маски і зсувом дисків. Реєстрація @property робить її
+   анімованою — без неї keyframes по custom property не інтерполюються. */
+@property --close {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 15%;
+}
+
+/* Вісімки — порт оригіналу: два конусні диски, чий «пояс» стискається анімацією
+   ЗМІННОЇ --close (15%→20%): вона одночасно поглиблює зріз маски і зсовує диски.
+   НЕ розкручувати диски на окремі transform-анімації — саме єдина змінна дає рідний
+   рух оригіналу; поштучні швидкості колись дали «зникнення» фону (той самий клас
+   пастки, що й у WebGL-фоні). Геометрія перевірена: зріз max 20% << 50% диска —
+   зникнення неможливе (радіусно-маскова пастка літери C тут не повторена).
+   Дзеркальна вісімка — та сама, у протифазі. */
+.char-8, .char-8-mirror { animation: waistSqueeze 4s ease-in-out infinite; }
+.char-8-mirror { animation-direction: reverse; }
+
 .char-8::before, .char-8::after,
 .char-8-mirror::before, .char-8-mirror::after {
   content: ''; position: absolute;
   width: 92px; height: 92px; border-radius: 50%;
-  background: conic-gradient(#0e4a8a, #0d3d3d, #0e4a8a);
-  mask-image: linear-gradient(transparent 28%, black 38%);
-  -webkit-mask-image: linear-gradient(transparent 28%, black 38%);
+  background: conic-gradient(from 0deg, var(--fig-dark), var(--fig-light));
+  mask-image: linear-gradient(transparent calc(var(--close) / 2), black var(--close));
+  -webkit-mask-image: linear-gradient(transparent calc(var(--close) / 2), black var(--close));
 }
 
-.char-8::before, .char-8-mirror::before { top: 0; transform: scaleY(-1); }
-.char-8::after, .char-8-mirror::after { bottom: 0; }
+.char-8::before, .char-8-mirror::before { top: 0; transform: translateY(var(--close)) scaleY(-1); }
+.char-8::after, .char-8-mirror::after { bottom: 0; transform: translateY(calc(-1 * var(--close))); }
 
-.char-8::before { animation: eightBreath 4s ease-in-out infinite; }
-.char-8::after { animation: eightBreath 4s ease-in-out infinite reverse; }
-.char-8-mirror::before { animation: eightBreath 4s ease-in-out infinite reverse; }
-.char-8-mirror::after { animation: eightBreath 4s ease-in-out infinite; }
+@keyframes waistSqueeze {
+  50% { --close: 20%; }
+}
 
 /* F: жирні пропорції (стійка 32px, рамени 32px) — вибір користувача «Жирна»,
    щоб фігура важила поруч із круглими 8/C. Товщини узгоджені з .char у всіх
@@ -170,7 +205,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .char-f::before {
   content: ''; position: absolute;
   left: 30px; top: 16px; width: 32px; height: 126px;
-  background: linear-gradient(#0e4a8a, #0d3d3d);
+  background: linear-gradient(var(--fig-light), var(--fig-dark));
   border-radius: 8px;
   animation: eightBreath 4s ease-in-out infinite reverse;
 }
@@ -178,9 +213,9 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 .char-f::after {
   content: ''; position: absolute;
   left: 30px; top: 16px; width: 56px; height: 32px;
-  background: linear-gradient(#0e4a8a, #0d3d3d);
+  background: linear-gradient(var(--fig-light), var(--fig-dark));
   border-radius: 8px;
-  box-shadow: 0 62px 0 #0d3d3d;
+  box-shadow: 0 62px 0 var(--fig-dark);
   animation: eightBreath 4s ease-in-out infinite;
 }
 
@@ -198,10 +233,10 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
      Товщина кільця 32px = стійка F (вибір користувача «жирна як F»).
      Якщо міняєш кути рота або маску — дивись фігуру наживо на проді. */
   background: conic-gradient(from 0deg,
-    #0d3d3d 0deg, #0e4a8a 62deg,
+    var(--fig-dark) 0deg, var(--fig-light) 62deg,
     transparent 64deg 116deg,
-    #0e4a8a 118deg, #0d3d3d 300deg,
-    #0e4a8a 356deg, #0d3d3d 360deg);
+    var(--fig-light) 118deg, var(--fig-dark) 300deg,
+    var(--fig-light) 356deg, var(--fig-dark) 360deg);
   mask-image: radial-gradient(ellipse 7.9% 27.5% at 50% 50%, transparent 97%, black 100%);
   -webkit-mask-image: radial-gradient(ellipse 7.9% 27.5% at 50% 50%, transparent 97%, black 100%);
   animation: eightBreath 4s ease-in-out infinite;
@@ -445,7 +480,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   .char { width: 118px; height: 200px; }
   .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 118px; height: 118px; }
   .char-f::before { left: 39px; top: 20px; width: 40px; height: 160px; }
-  .char-f::after { left: 39px; top: 20px; width: 70px; height: 40px; box-shadow: 0 80px 0 #0d3d3d; }
+  .char-f::after { left: 39px; top: 20px; width: 70px; height: 40px; box-shadow: 0 80px 0 var(--fig-dark); }
   .char-c::before { width: 100px; height: 172px; }
 }
 
@@ -499,7 +534,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   .char { width: 90px; height: 160px; }
   .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 90px; height: 90px; }
   .char-f::before { left: 30px; width: 30px; height: 128px; }
-  .char-f::after { left: 30px; width: 54px; height: 30px; box-shadow: 0 68px 0 #0d3d3d; }
+  .char-f::after { left: 30px; width: 54px; height: 30px; box-shadow: 0 68px 0 var(--fig-dark); }
   .char-c::before { width: 70px; height: 140px; }
   .products-grid { gap: 16px; }
   .buy-card { padding: 32px 24px; }
@@ -517,7 +552,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   .char { width: 70px; height: 130px; }
   .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 70px; height: 70px; }
   .char-f::before { left: 23px; width: 24px; height: 106px; }
-  .char-f::after { left: 23px; width: 42px; height: 24px; box-shadow: 0 58px 0 #0d3d3d; }
+  .char-f::after { left: 23px; width: 42px; height: 24px; box-shadow: 0 58px 0 var(--fig-dark); }
   .char-c::before { width: 55px; height: 110px; }
   .clay-card { padding: 24px 20px; }
   .title { letter-spacing: -0.02em; }
@@ -529,6 +564,6 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   .char { width: 60px; height: 110px; }
   .char-8::before, .char-8::after, .char-8-mirror::before, .char-8-mirror::after { width: 60px; height: 60px; }
   .char-f::before { left: 19px; width: 21px; height: 90px; }
-  .char-f::after { left: 19px; width: 37px; height: 21px; box-shadow: 0 48px 0 #0d3d3d; }
+  .char-f::after { left: 19px; width: 37px; height: 21px; box-shadow: 0 48px 0 var(--fig-dark); }
   .char-c::before { width: 45px; height: 90px; }
 }
