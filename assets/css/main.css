@@ -70,22 +70,33 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
    (і на пристроях без WebGL) під контентом була б порожнеча/білий спалах. Тепер
    «перша фарба» сторінки правильна навіть до виконання JS — і без стрибка,
    коли canvas з'являється поверх (він малює той самий колір бази). */
-/* Слабкі пристрої: фон сторінки = базовий колір WebGL (--bg вище). Без цього до першого
-   WebGL-кадру (і на пристроях без WebGL) під контентом була б порожнеча. «Перша фарба»
-   правильна ще до JS — і без стрибка, коли canvas з'являється поверх.
-   (Раніше тут стояв окремий коментар про градієнт фолбеку — об'єднано.) */
-#bg-three { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-#bg-three canvas { display: block; width: 100% !important; height: 100% !important; }
-#bg-fallback {
-  position: fixed; inset: 0; z-index: 0;
-  /* Статичний «мармуровий» фолбек для слабких мереж/пристроїв без WebGL: три м'які
-     плями у фірмових тонах поверх бази. Без анімації й GPU — сторінка без WebGL
-     більше не виглядає мертво-чорною. База = --bg (тримати синхронно). */
+/* Слабкі пристрої/мережі: статичний «мармуровий» підкладковий шар (html::before).
+   Це НЕ заміна анімації — це те, що видно ДО першого WebGL-кадру (поки three.js
+   доїжджає на 3G) або якщо WebGL недоступний. Canvas (#bg-three, z-index 0)
+   завжди малює ПОВЕРХ нього, тож щойно модуль завантажиться — анімований фон
+   автоматично перекриє підкладку. Ніякого «назавжди статичного» стану немає:
+   підкладка існує тільки під час завантаження/відмови. База градієнта = --bg. */
+html::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
     radial-gradient(ellipse 60% 50% at 25% 30%, rgba(79, 155, 232, 0.10), transparent 70%),
     radial-gradient(ellipse 55% 45% at 75% 65%, rgba(26, 110, 106, 0.12), transparent 70%),
     radial-gradient(ellipse 40% 35% at 60% 20%, rgba(14, 74, 138, 0.14), transparent 70%),
-    #0a0a10;
+    var(--bg);
+}
+#bg-three { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+#bg-three canvas { display: block; width: 100% !important; height: 100% !important; }
+#bg-fallback {
+  position: fixed; inset: 0; z-index: 0;
+  /* Той самий мармуровий градієнт, що в html::before — показується JS-гілкою
+     «WebGL недоступний» (background.js). Візуально ідентичний підкладці,
+     щоб перехід між ними був непомітний. База = --bg (тримати синхронно). */
+  background:
+    radial-gradient(ellipse 60% 50% at 25% 30%, rgba(79, 155, 232, 0.10), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 75% 65%, rgba(26, 110, 106, 0.12), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 60% 20%, rgba(14, 74, 138, 0.14), transparent 70%),
+    var(--bg);
   display: none;
 }
 
