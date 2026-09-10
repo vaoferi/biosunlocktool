@@ -41,13 +41,10 @@ jobs:
         run: node build.js
 
       - name: Publish to Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          accountId: ${{ env.CF_ACCOUNT_ID }}
-          # ВАЖЛИВО: параметр pages-action називається apiToken (не apiKey).
-          apiToken: ${{ env.CF_API_TOKEN }}
-          projectName: biosunlocktool
-          directory: .
-          # gitHubToken навмисно НЕ передається: зі стандартним GITHUB_TOKEN дія
-          # падає на створенні GitHub Deployment ("Resource not accessible by
-          # integration" — нема права deployments:write), ще ДО завантаження на Pages.
+        # pages-action@v1 використовує застарілий API-шлях getProject, який
+        # може отримати Cloudflare 429 ще до завантаження файлів. Wrangler
+        # виконує нативний Pages deploy і використовує ті самі secrets.
+        run: wrangler pages deploy . --project-name biosunlocktool
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ env.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ env.CF_ACCOUNT_ID }}
