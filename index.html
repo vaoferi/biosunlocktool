@@ -5,7 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dell BIOS Password Reset Tool | Unlock Instantly | NexxGSM</title>
   <link rel="canonical" href="https://biosunlocktool.com/">
-  <script>document.documentElement.classList.add('has-motion-js');</script>
+  <script>
+    document.documentElement.classList.add('has-motion-js');
+    // Регіональні домени використовують один canonical landing, але можуть
+    // мати власну атмосферу. Невідомі host-и (включно зі staging) лишаються US.
+    (function () {
+      var host = window.location.hostname.toLowerCase();
+      var subdomain = host.split('.')[0];
+      var market = subdomain === 'india' ? 'india' : 'us';
+      document.documentElement.dataset.market = market;
+    }());
+  </script>
   <!-- favicon: та сама марка, що й у hero-візуалі -->
   <meta name="description" content="Reset or remove Dell BIOS password instantly. Software tool for Latitude, Inspiron, XPS, Precision. Trusted by 2,500+ customers.">
   <!-- OG/Twitter: превʼю для шеру (Telegram-бот/чати — головний канал конверсії).
@@ -42,7 +52,7 @@
        в усіх місцях, де URL прописаний (CSS і dynamic import сцени). Без зміни URL
        кеш НЕ інвалідовується. Страхівка: _headers у CF-репо робить ассети
        must-revalidate (浏览器 перезапитує завжди), штамп — другий шар. -->
-  <link rel="stylesheet" href="assets/css/main.css?v=20260910t">
+  <link rel="stylesheet" href="assets/css/main.css?v=20260910u">
   <!-- Favicon повторює нову марку монітора з кодом, а не старий замок. -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e4a8a'/%3E%3Crect x='11' y='12' width='42' height='29' rx='3' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M17 35h30M27 46h10M32 41v5M21 50h22' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M22 23h20M22 29h13' stroke='%235a9ff0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
   <!-- FAQPage schema: відповідає видимим 8 гайдам-акордеонам (текст конденсований з перших двох абзаців).
@@ -487,7 +497,7 @@
   <!-- Канонічний фон (2026-09-10): один CSS gradient працює на всіх екранах;
        wide-сцена додає поверх нього прозорий 3D-ПК, а mobile не запускає WebGL.
        Так фон не стає строкатим і не залежить від важкого шумового shader-а.
-       CSS-штамп: ?v=20260910t; сцена: ?v=20260910p; vendor three: ?v=20260909c. -->
+       CSS-штамп: ?v=20260910u; сцена: ?v=20260910p; vendor three: ?v=20260909c. -->
   <link rel="preload" as="script" media="(min-width: 701px)" href="assets/js/vendor/three.module.min.js?v=20260909c">
   <script type="module">
     if (window.matchMedia('(min-width: 701px)').matches) {
