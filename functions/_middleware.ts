@@ -1,8 +1,7 @@
-// Cloudflare Pages Functions — роутинг коротких субдоменів на локалі.
-// Локалі фізично живуть у /locales/<locale>/, тому ПЕРЕЗАПИС шляху через
-// context.next() зі зміненим pathname дав би 404 (такого файлу не існує).
-// Робоче рішення: корінь субдомену — 308-редірект на /locales/<locale>/;
-// решта шляхів і канонічні market-host-и (US/CA/IN) — як є.
+// Cloudflare Pages Functions — host-aware роутинг коротких субдоменів на локалі.
+// Локалі фізично живуть у /locales/<locale>/, але користувач не повинен бачити
+// технічний каталог у браузері: внутрішній fetch через ASSETS зберігає чистий
+// root URL і водночас віддає правильний статичний index.html.
 export async function onRequest(context) {
   const url = new URL(context.request.url);
   const sub = url.hostname.split(".")[0].toLowerCase();
@@ -15,5 +14,10 @@ export async function onRequest(context) {
   if (!locale) return context.next(); // apex / www / preview → канон en-US
 
   if (url.pathname !== "/" && url.pathname !== "") return context.next();
-  return Response.redirect(new URL(`/locales/${locale}/`, url).toString(), 308);
+
+  // Pages Functions' ASSETS binding supports an internal asset fetch with a
+  // rewritten pathname; unlike a redirect, this keeps af/de/pl at their clean
+  // subdomain roots while serving the locale's canonical layout.
+  const localeUrl = new URL(`/locales/${locale}/index.html`, url);
+  return context.env.ASSETS.fetch(new Request(localeUrl, context.request));
 }
