@@ -34,6 +34,6 @@ npm run pages:deploy # Same as build
 | us.biosunlocktool.com | en-US / US alias |
 | ca.biosunlocktool.com | en-US / Canada English experiment |
 | in.biosunlocktool.com | en-US / India atmosphere |
-| de.biosunlocktool.com | de-DE |
+| de.biosunlocktool.com | de-DE — German canonical-layout experiment |
 | pl.biosunlocktool.com | pl-PL — Polish canonical-layout experiment |
 | af.biosunlocktool.com | af-ZA |
