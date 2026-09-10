@@ -1,9 +1,7 @@
 /* BIOS ZONE — American Landing (en-US)
    Polish: WCAG AA contrast, full responsive coverage */
 :root {
-  --bg: #0a0a10; /* = базовий колір WebGL-фону і #bg-fallback: до першого кадру і без WebGL
-     сторінка вже темна (слабкі мережі/пристрої — жодного білого спалаху). Міняти суворо разом
-     з setClearColor у background.js і градієнтом #bg-fallback. */
+  --bg: #0a0a10; /* базовий fallback під CSS gradient і прозорий WebGL canvas */
   --text: #f5f5fa;
   --text-2: #b8b8c8;
   --mute: #a0a0b0;
@@ -49,7 +47,6 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
-  overflow-x: hidden;
   min-height: 100vh;
 }
 
@@ -58,6 +55,7 @@ body {
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  html::before { animation: none; background-position: 50% 50%; }
   .char-8, .char-8-mirror,
   .char-f::before, .char-f::after, .char-c::before { animation: none; }
   /* Вісімки в reduced-motion стають статичними з --close = 15% (initial-value):
@@ -71,7 +69,13 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 /* Тіні під текстом скла: hero-заголовок, заголовки секцій, eyebrow, картки продуктів,
    кроки, summary гайдів, buy-блок. М'яка широка тінь (не обведення) — текст читається
    поверх анімованого фону і скла без візуального «бруду». За побажанням (2026-09-09). */
-.title, .section-title, .eyebrow, .product h3, .product p, .step-item, .guide summary, .guide-body, .guide-body h3, .buy-card h2, .buy-card p, .site-footer {
+.title, .section-title, .eyebrow, .product h3, .product p, .step-item, .guide summary, .guide-body, .guide-body h3, .buy-card h2, .buy-card p, .site-footer,
+/* Мобільна перевірка 2026-09-10: хедер — теж скло, але був ЄДИНИМ скляним блоком
+   без text-shadow (пропуск у цьому пакеті). На 320–480px під хедером проходять
+   світлі піки фону: замір контрасту білого тексту крізь скло 0.45 = 2.16:1
+   (норма AA 4.5:1). Тінь не змінює затверджену прозорість 0.45 — вона
+   повертає контурну читабельність у найгіршому кадрі. */
+.header .logo-text .a, .header .logo-text .b, .header .nav-pill, .header .cta-text {
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
 }
 
@@ -79,38 +83,34 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
    (і на пристроях без WebGL) під контентом була б порожнеча/білий спалах. Тепер
    «перша фарба» сторінки правильна навіть до виконання JS — і без стрибка,
    коли canvas з'являється поверх (він малює той самий колір бази). */
-/* Слабкі пристрої/мережі: статичний «мармуровий» підкладковий шар (html::before).
-   Це НЕ заміна анімації — це те, що видно ДО першого WebGL-кадру (поки three.js
-   доїжджає на 3G) або якщо WebGL недоступний. Canvas (#bg-three, z-index 0)
-   завжди малює ПОВЕРХ нього, тож щойно модуль завантажиться — анімований фон
-   автоматично перекриє підкладку. Ніякого «назавжди статичного» стану немає:
-   підкладка існує тільки під час завантаження/відмови. База градієнта = --bg. */
+/* Єдиний задній фон сторінки: спокійний blue gradient із CodePen-рецепта
+   (linear-gradient 45deg, 200% canvas, position 0→100→0 за 6s). Він живе в CSS,
+   тому не залежить від WebGL і однаково працює на mobile та desktop. Прозорий
+   canvas із 3D-ПК накладається поверх нього, але сам градієнт не замінюється сценою. */
 html::before {
   content: '';
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background:
-    radial-gradient(ellipse 60% 50% at 25% 30%, rgba(79, 155, 232, 0.10), transparent 70%),
-    radial-gradient(ellipse 55% 45% at 75% 65%, rgba(26, 110, 106, 0.12), transparent 70%),
-    radial-gradient(ellipse 40% 35% at 60% 20%, rgba(14, 74, 138, 0.14), transparent 70%),
-    var(--bg);
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  /* Остання корекція користувача: ще трохи темніше, з додатковим середнім
+     синім стопом; ПК лишається без змін. */
+  background: linear-gradient(45deg, #0d3f67 0%, #082b47 50%, #010508 100%);
+  background-size: 200% 200%;
+  animation: pageGradient 12s ease infinite;
 }
-#bg-three { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+@keyframes pageGradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+#bg-three { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 #bg-three canvas { display: block; width: 100% !important; height: 100% !important; }
 #bg-fallback {
-  position: fixed; inset: 0; z-index: 0;
-  /* Той самий мармуровий градієнт, що в html::before — показується JS-гілкою
-     «WebGL недоступний» (background.js). Візуально ідентичний підкладці,
-     щоб перехід між ними був непомітний. База = --bg (тримати синхронно). */
-  background:
-    radial-gradient(ellipse 60% 50% at 25% 30%, rgba(79, 155, 232, 0.10), transparent 70%),
-    radial-gradient(ellipse 55% 45% at 75% 65%, rgba(26, 110, 106, 0.12), transparent 70%),
-    radial-gradient(ellipse 40% 35% at 60% 20%, rgba(14, 74, 138, 0.14), transparent 70%),
-    var(--bg);
+  position: fixed; inset: 0; z-index: 1;
+  /* Fallback лишається тією самою CSS-поверхнею, якщо WebGL не стартував. */
+  background: transparent;
   display: none;
 }
 
 .page {
-  position: relative; z-index: 1;
+  position: relative; z-index: 2;
   max-width: 1200px; margin: 0 auto;
   padding: 24px clamp(16px, 4vw, 48px) 60px;
 }
@@ -243,9 +243,12 @@ html::before {
 
 /* Коробки літер. Співвідношення від D = --figd (база 92px):
    .char (коробка F/C): 1×1.7174D (92→158) | 8: висота = 2D (1:2 оригіналу)
-   F-стійка: left .326D top .174D w .348D h 1.370D | F-рамено: w .609D h .348D,
-   тінь .674D | C: left/top .087D, коробка .826D×1.543D.
-   НЕ міняти окремі calc-и «на око» — перерахуй від базових px (30/92=0.326 тощо). */
+   Вирівнювання ваги 2026-09-10 («підтягнути C, F до ваги 8»): перо F .44D
+   (висота 1.46D), рамено .78D; C зовнішній еліпс .94×1.67D, кільце ~42px.
+   Вага на висоту: 8 = 0.785D, F ≈ 0.82D, C ≈ 0.62D + світлове плато.
+   F-стійка: left .275D top .14D w .44D h 1.46D | F-рамено: w .78D h .44D, тінь .78D
+   | C: left/top .03D, коробка .94D×1.67D, радіуси отвору 4%×23%.
+   НЕ міняти окремі calc-и «на око» — перерахуй від базових px (27/92=0.295 тощо). */
 .char { position: relative; width: var(--figd); height: calc(var(--figd) * 1.7174); flex-shrink: 0; }
 
 /* Вісімки — точна пропорція оригіналу 1:2 (architect-порт): контейнер = дві висоти
@@ -295,27 +298,33 @@ html::before {
    від --figd (див. таблицю біля .char): масштабується автоматично на всіх екранах. */
 .char-f::before {
   content: ''; position: absolute;
-  left: calc(var(--figd) * 0.326); top: calc(var(--figd) * 0.174);
-  width: calc(var(--figd) * 0.348); height: calc(var(--figd) * 1.370);
-  background: linear-gradient(var(--fig-light), var(--fig-dark));
+  left: calc(var(--figd) * 0.275); top: calc(var(--figd) * 0.14);
+  width: calc(var(--figd) * 0.44); height: calc(var(--figd) * 1.46);
+  /* Світлове плато 18%–92%: на товстому пері темний кінець домінував і знижував
+     середню яскравість проти дисків 8 — те саме перо, більше світла. */
+  background: linear-gradient(var(--fig-light) 18%, var(--fig-dark) 92%);
   border-radius: calc(var(--figd) * 0.087);
   animation: eightBreath 4s ease-in-out infinite reverse;
 }
 
 .char-f::after {
   content: ''; position: absolute;
-  left: calc(var(--figd) * 0.326); top: calc(var(--figd) * 0.174);
-  width: calc(var(--figd) * 0.609); height: calc(var(--figd) * 0.348);
-  background: linear-gradient(var(--fig-light), var(--fig-dark));
+  left: calc(var(--figd) * 0.275); top: calc(var(--figd) * 0.14);
+  width: calc(var(--figd) * 0.78); height: calc(var(--figd) * 0.44);
+  background: linear-gradient(var(--fig-light) 18%, var(--fig-dark) 92%);
   border-radius: calc(var(--figd) * 0.087);
-  box-shadow: 0 calc(var(--figd) * 0.674) 0 var(--fig-dark);
+  /* Нейтральний темний (#1a1a22) замість var(--fig-dark) (2026-09-10, impeccable detect):
+     хроматичний box-shadow на темному тлі — ознака AI-генерації. Візуально це «друге
+     рамено» F, нейтральний сірий зберігає вагу літери поруч з 8/C, але не тягне
+     «кольорового сяйва». */
+  box-shadow: 0 calc(var(--figd) * 0.78) 0 #1a1a22;
   animation: eightBreath 4s ease-in-out infinite;
 }
 
 .char-c::before {
   content: ''; position: absolute;
-  left: calc(var(--figd) * 0.087); top: calc(var(--figd) * 0.087);
-  width: calc(var(--figd) * 0.826); height: calc(var(--figd) * 1.543);
+  left: calc(var(--figd) * 0.03); top: calc(var(--figd) * 0.03);
+  width: calc(var(--figd) * 0.94); height: calc(var(--figd) * 1.67);
   border-radius: 50%;
   /* C як жирна дуга: конус малює колір + клиновий рот праворуч (0° = вгору,
      90° = праворуч; рот 64–116°), радіальна маска вибирає отвір.
@@ -324,15 +333,15 @@ html::before {
      радіуси 7.9% × 27.5%. Колись записали розміри як радіуси (52.6%/73.2%) —
      отвір став 80×208, більший за фігуру, і C ПОВНІСТЮ зникла з продакшну.
      Перевірка: радіус ≤ 50% відповідної сторони коробки.
-     Товщина кільця 32px = стійка F (вибір користувача «жирна як F»).
+     Кільце ~38px = стійка F .40D (пара тримається разом; вирівнювання ваги 2026-09-10).
      Якщо міняєш кути рота або маску — дивись фігуру наживо на проді. */
   background: conic-gradient(from 0deg,
-    var(--fig-dark) 0deg, var(--fig-light) 62deg,
+    var(--fig-dark) 0deg, var(--fig-light) 58deg,
     transparent 64deg 116deg,
-    var(--fig-light) 118deg, var(--fig-dark) 300deg,
-    var(--fig-light) 356deg, var(--fig-dark) 360deg);
-  mask-image: radial-gradient(ellipse 7.9% 27.5% at 50% 50%, transparent 97%, black 100%);
-  -webkit-mask-image: radial-gradient(ellipse 7.9% 27.5% at 50% 50%, transparent 97%, black 100%);
+    var(--fig-light) 118deg, var(--fig-dark) 316deg,
+    var(--fig-light) 358deg, var(--fig-dark) 360deg);
+  mask-image: radial-gradient(ellipse 4% 23% at 50% 50%, transparent 97%, black 100%);
+  -webkit-mask-image: radial-gradient(ellipse 4% 23% at 50% 50%, transparent 97%, black 100%);
   animation: eightBreath 4s ease-in-out infinite;
 }
 
@@ -342,6 +351,22 @@ html::before {
 }
 
 /* HERO TEXT */
+.hero-copy {
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  padding: clamp(14px, 2vmin, 22px) clamp(16px, 2.4vw, 28px);
+  /* Та сама прозорість, що у Telegram Bot: фон не перекриває сцену,
+     а лише розмиває її під текстом для читабельності. */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow);
+}
+.hero-copy .hero-sub { margin-bottom: 0; }
+
 .eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 13px; letter-spacing: 0.04em; color: var(--text-2);
@@ -418,6 +443,7 @@ html::before {
 }
 .clay-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-4px); }
 .product.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 8px 32px rgba(0,0,0,0.4); }
+.product:focus-visible { border-color: var(--accent); }
 
 .prod-icon {
   width: 48px; height: 48px; background: rgba(255,255,255,0.08);
@@ -458,6 +484,8 @@ html::before {
 .buy-card { text-align: center; padding: 40px 32px; }
 .buy-card h2 { font-family: var(--font-display); font-size: 28px; margin-bottom: 8px; }
 .buy-card p { color: var(--text-2); margin-bottom: 24px; font-size: 16px; }
+.buy-card[data-selected] { border-color: rgba(90, 159, 240, 0.65); box-shadow: 0 0 0 1px rgba(90, 159, 240, 0.38), var(--glass-shadow); }
+.selected-plan { min-height: 22px; margin: -10px 0 18px; color: var(--accent); font-size: 14px; font-weight: 600; }
 .pay-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
 .btn-paypal {
@@ -466,6 +494,7 @@ html::before {
   border-radius: 999px; font-weight: 600; font-size: 16px; transition: all 0.2s;
 }
 .btn-paypal:hover { background: #005ea6; transform: translateY(-2px); }
+.btn-paypal:disabled { cursor: not-allowed; opacity: .62; transform: none; }
 .btn-paypal svg { width: 18px; height: 18px; }
 
 .btn-tg {
@@ -624,12 +653,34 @@ html::before {
     transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s;
   }
   .nav-pill { padding: 12px 18px; font-size: 15px; text-align: left; }
-  .products-grid { grid-template-columns: 1fr; max-width: 500px; margin-left: auto; margin-right: auto; }
-  .step-row { grid-template-columns: repeat(2, 1fr); max-width: 500px; margin-left: auto; margin-right: auto; }
+  /* Планшет/вузький desktop ще тримає ПК-композицію: картки стискаються,
+     але не перетворюються на довгу вертикальну колонку. Перелом нижче 700px
+     залишає mobile-friendly stacking, коли чотири кроки вже фізично не вміщаються. */
+  .products-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .products-grid .clay-card { padding: 20px 16px; }
+  .products-grid .prod-icon { width: 42px; height: 42px; margin-bottom: 12px; }
+  .product h3 { font-size: 16px; }
+  .product p { font-size: 14px; line-height: 1.45; }
+  .step-row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .step-item { padding: 18px 8px; gap: 8px; font-size: 13px; }
   .guides-grid { grid-template-columns: repeat(2, 1fr); }
   /* .title і .hero тут БІЛЬШЕ не перевизначаються: розмір тексту і вертикальний
      ритим тепер самі масштабуються від vmin (базові clamp-и вище), і hero
      вміщується в 1 екран за будь-яких пропорцій (зауваження 2026-09-09). */
+}
+
+/* Content-driven mobile breakpoint: three products/four steps no longer have
+   enough readable width below 700px, so only then reflow them. */
+@media (max-width: 700px) {
+  /* Розкладка змінюється, але page gutter — ні: картки мають ті самі лівий
+     і правий відступ, що header, CTA, guides та footer. */
+  .products-grid { grid-template-columns: 1fr; gap: 16px; }
+  .products-grid .clay-card { padding: 24px 20px; }
+  .products-grid .prod-icon { width: 48px; height: 48px; margin-bottom: 16px; }
+  .product h3 { font-size: 18px; }
+  .product p { font-size: 15px; line-height: 1.6; }
+  .step-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .step-item { padding: 20px 12px; font-size: 14px; }
 }
 
 /* RESPONSIVE — Mobile large */
