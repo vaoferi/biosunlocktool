@@ -18,6 +18,8 @@ export async function onRequest(context) {
   // Pages Functions' ASSETS binding supports an internal asset fetch with a
   // rewritten pathname; unlike a redirect, this keeps af/de/pl at their clean
   // subdomain roots while serving the locale's canonical layout.
-  const localeUrl = new URL(`/locales/${locale}/index.html`, url);
+  // Keep the trailing slash: Pages' asset server canonicalizes index.html to
+  // this directory with a redirect, which would leak the internal path again.
+  const localeUrl = new URL(`/locales/${locale}/`, url);
   return context.env.ASSETS.fetch(new Request(localeUrl, context.request));
 }
