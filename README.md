@@ -36,4 +36,4 @@ npm run pages:deploy # Same as build
 | in.biosunlocktool.com | en-US / India atmosphere |
 | de.biosunlocktool.com | de-DE — German canonical-layout experiment |
 | pl.biosunlocktool.com | pl-PL — Polish canonical-layout experiment |
-| af.biosunlocktool.com | af-ZA |
+| af.biosunlocktool.com | af-ZA — Africa English canonical-layout experiment |

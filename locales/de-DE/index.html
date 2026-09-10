@@ -17,6 +17,7 @@
       var market = (subdomain === 'in' || subdomain === 'india') ? 'india'
         : (subdomain === 'pl' || subdomain === 'poland') ? 'poland'
         : (subdomain === 'de' || subdomain === 'germany') ? 'germany'
+        : (subdomain === 'af' || subdomain === 'africa') ? 'africa'
         : 'us';
       document.documentElement.dataset.market = market;
     }());
@@ -57,7 +58,7 @@
        в усіх місцях, де URL прописаний (CSS і dynamic import сцени). Без зміни URL
        кеш НЕ інвалідовується. Страхівка: _headers у CF-репо робить ассети
        must-revalidate (浏览器 перезапитує завжди), штамп — другий шар. -->
-  <link rel="stylesheet" href="/assets/css/main.css?v=20260910w">
+  <link rel="stylesheet" href="/assets/css/main.css?v=20260910x">
   <!-- Favicon повторює нову марку монітора з кодом, а не старий замок. -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e4a8a'/%3E%3Crect x='11' y='12' width='42' height='29' rx='3' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M17 35h30M27 46h10M32 41v5M21 50h22' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M22 23h20M22 29h13' stroke='%235a9ff0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
   <!-- FAQPage schema: відповідає видимим 8 гайдам-акордеонам (текст конденсований з перших двох абзаців).

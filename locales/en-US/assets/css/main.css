@@ -293,6 +293,75 @@ html[data-market="germany"] .buy-card[data-selected] {
   html[data-market="germany"]::after { animation: none; }
 }
 
+/* Africa market theme: an indigo / terracotta / ochre textile experiment.
+   Africa is not one visual culture, so this is deliberately documented as a
+   reversible pan-African English A/B hypothesis rather than a literal flag or
+   claim to represent every region. The repeated diamond rhythm references the
+   controlled geometric construction found in indigo-resist textiles; it stays
+   behind the shared glass and 8FC8 hero so conversion geometry remains comparable. */
+html[data-market="africa"] {
+  --bg: #080d20;
+  --text: #fff8ea;
+  --text-2: #e7d9c8;
+  --mute: #c5b6a8;
+  --card: rgba(14, 15, 39, 0.62);
+  --card-border: rgba(242, 189, 95, 0.36);
+  --glass-bg: rgba(8, 11, 29, 0.7);
+  --glass-shadow: 0 14px 44px rgba(2, 3, 13, 0.7);
+  --accent: #f2bd5f;
+  --accent-2: #68a981;
+}
+
+html[data-market="africa"]::before {
+  background:
+    radial-gradient(ellipse at 82% 18%, rgba(222, 103, 60, 0.46) 0%, transparent 25%),
+    radial-gradient(ellipse at 12% 78%, rgba(104, 169, 129, 0.24) 0%, transparent 28%),
+    linear-gradient(135deg, #090d25 0%, #151843 39%, #47202c 69%, #080b18 100%);
+  background-size: 165% 165%;
+  animation: africaAtmosphere 28s cubic-bezier(.45, 0, .25, 1) infinite alternate;
+}
+
+html[data-market="africa"]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(30deg, transparent 0 43%, rgba(242, 189, 95, 0.2) 43.5% 45%, transparent 45.5% 100%),
+    linear-gradient(150deg, transparent 0 43%, rgba(222, 103, 60, 0.18) 43.5% 45%, transparent 45.5% 100%),
+    repeating-linear-gradient(90deg, rgba(255, 248, 234, 0.05) 0 1px, transparent 1px 28px);
+  background-size: 84px 84px, 84px 84px, 28px 28px;
+  mix-blend-mode: screen;
+  mask-image: linear-gradient(125deg, black 0%, transparent 88%);
+  animation: africaTextile 36s linear infinite;
+}
+
+@keyframes africaAtmosphere {
+  0% { background-position: 10% 58%; }
+  100% { background-position: 90% 42%; }
+}
+
+@keyframes africaTextile {
+  from { transform: translate3d(-1.5%, -0.5%, 0) rotate(-0.2deg); }
+  to { transform: translate3d(1.5%, 0.8%, 0) rotate(0.2deg); }
+}
+
+html[data-market="africa"] ::selection {
+  background: rgba(242, 189, 95, 0.5);
+}
+
+html[data-market="africa"] .buy-card[data-selected] {
+  border-color: rgba(242, 189, 95, 0.86);
+  box-shadow: 0 0 0 1px rgba(242, 189, 95, 0.52), var(--glass-shadow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-market="africa"]::before,
+  html[data-market="africa"]::after { animation: none; }
+}
+
 /* Motion layer: CSS timelines are an enhancement over the readable static page.
    Unsupported browsers use the IntersectionObserver fallback in index.html. */
 .scroll-progress {

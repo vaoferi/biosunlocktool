@@ -5,7 +5,7 @@
 ## Поточний стан
 
 - ✅ Канонічна сторінка (en-US) лежить у корені репо (`index.html` + `assets/`) — це те, що бачить `biosunlocktool.com`;
-- ✅ `locales/<locale>/` — місце мовних копій; `pl-PL` містить повний canonical-layout із польським UI та Poland-атмосферою, `de-DE` тепер містить повний німецький UI та Germany-атмосферу, `af` ще залишається legacy-заглушкою, а `in` використовує English canonical з India-атмосферою;
+- ✅ `locales/<locale>/` — місце мовних копій; `pl-PL` містить повний canonical-layout із польським UI та Poland-атмосферою, `de-DE` — повний німецький UI та Germany-атмосферу, `af-ZA` — повний англійський canonical-layout для Africa з indigo/terracotta-атмосферою, а `in` використовує English canonical з India-атмосферою;
 - ✅ GitHub Action `.github/workflows/deploy.yml` деплоїть на Pages при кожному пуші в `main`;
 - ✅ `functions/_middleware.ts` роутить `de./pl./af.` на локалі; `us./ca./in.` залишаються на canonical landing.
 

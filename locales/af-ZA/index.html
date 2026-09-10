@@ -1,60 +1,659 @@
 <!DOCTYPE html>
-<html lang="af-ZA">
+<html lang="en-ZA">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dell BIOS Password Unlock — Afrika</title>
-    <meta name="description" content="Dell BIOS password unlock tool for African customers. Supports South Africa, Kenya, Nigeria. Latitude, Inspiron, XPS models.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300..700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/assets/css/main.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dell BIOS Unlock Tool | Fast Africa Support | BIOS ZONE</title>
+  <link rel="canonical" href="https://biosunlocktool.com/">
+  <script>
+    document.documentElement.classList.add('has-motion-js');
+    // Регіональні домени використовують один canonical landing, але можуть
+    // мати власну атмосферу. Невідомі host-и (включно зі staging) лишаються US.
+    (function () {
+      var host = window.location.hostname.toLowerCase();
+      var subdomain = host.split('.')[0];
+      // The two-letter market code is canonical; keep the earlier full-name
+      // alias during the domain migration so existing previews do not go dark.
+      var market = (subdomain === 'in' || subdomain === 'india') ? 'india'
+        : (subdomain === 'pl' || subdomain === 'poland') ? 'poland'
+        : (subdomain === 'de' || subdomain === 'germany') ? 'germany'
+        : (subdomain === 'af' || subdomain === 'africa') ? 'africa'
+        : 'us';
+      document.documentElement.dataset.market = market;
+    }());
+  </script>
+  <!-- favicon: та сама марка, що й у hero-візуалі -->
+  <meta name="description" content="Reset or remove a Dell BIOS password with fast code delivery and private support for customers across Africa. Latitude, Inspiron, XPS and Precision.">
+  <!-- OG/Twitter: превʼю для шеру (Telegram-бот/чати — головний канал конверсії).
+       og-cover.jpg: скланий з ілюстрації «hacker fishing» (квадрат по центру + розмитий фон), 1200×630, 34KB.
+       og:image/og:url — АБСОЛЮТНІ URL на бойовий домен: скрейпери Telegram/FB/X не резолвлять відносні шляхи.
+       Регенерація: python+PIL — фон = cover-crop джерела → GaussianBlur(20) → Brightness(0.45);
+       поверх — квадрат 620×620 по центру; JPEG q82. Джерела — обидві ізометрики в /Volumes/Work/8fc8/. -->
+  <meta property="og:title" content="Dell BIOS Unlock Tool — Fast Africa Support">
+  <meta property="og:description" content="Instant reset codes for Latitude, Inspiron, XPS and Precision, with private support for customers across Africa.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://biosunlocktool.com/">
+  <meta property="og:image" content="https://biosunlocktool.com/og-cover.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Isometric illustration of digital crime: hacker fishing for passwords on a computer — BIOS unlock service">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://biosunlocktool.com/og-cover.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Слабкі мережі: preload основних шрифтів (latin-підмножини з css2 API, версії v9/v23 —
+       при оновленні версій Google Fonts URL міняються; перевіряти curl-ом, інакше preload
+       дає 404 у консолі). display=swap уже є, тому текст видимий одразу навіть без preload. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="https://fonts.gstatic.com/s/intertight/v9/NGSwv5HMAFg6IuGlBNMjxLsH8ahuQ2e8.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="https://fonts.gstatic.com/s/archivoblack/v23/HTxqL289NzCGg4MzN6KJ7eW6CYyF_jzx13E.woff2">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter+Tight:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <!-- Phosphor CDN прибрано: був потрібен один іконка, а CDN тягнув 6 stylesheets.
+       Іконка замінена інлайн SVG у стилі решти іконок сторінки. -->
+  <!-- ВЕРСІЙНИЙ ШТАМП на ассетах (?v=...) — захист від edge/браузер-кешу:
+       інцидент 2026-09-09 — користувачі години отримували СТАРІ css/js з cf-кешу
+       (immutable), виглядало як «зник фон, hero не того розміру», хоча деплой був
+       зелений. ПРАВИЛО: кожен реліз із змінами css/js = підняти штамп (дата+літера)
+       в усіх місцях, де URL прописаний (CSS і dynamic import сцени). Без зміни URL
+       кеш НЕ інвалідовується. Страхівка: _headers у CF-репо робить ассети
+       must-revalidate (浏览器 перезапитує завжди), штамп — другий шар. -->
+  <link rel="stylesheet" href="/assets/css/main.css?v=20260910x">
+  <!-- Favicon повторює нову марку монітора з кодом, а не старий замок. -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e4a8a'/%3E%3Crect x='11' y='12' width='42' height='29' rx='3' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M17 35h30M27 46h10M32 41v5M21 50h22' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M22 23h20M22 29h13' stroke='%235a9ff0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <!-- FAQPage schema: відповідає видимим 8 гайдам-акордеонам (текст конденсований з перших двох абзаців).
+       Синхронізувати вручну при зміні питань/першої відповіді гайда. -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "name": "Dell BIOS Password Guides",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Forgot your Dell BIOS password — what actually works?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "On most modern Dell laptops, pulling the CMOS battery does not clear a System or Admin BIOS password. Before anything else, identify exactly which prompt you are seeing and carefully write down the full System Number shown on screen; for supported codes, a model-dependent recovery option may be available. This guide covers Dell System and Admin prompts. HDD/SSD locks, BitLocker, and Windows sign-in need different recovery paths."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "System Number vs. Service Tag — which one do you send?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Service Tag is Dell's identifier for support, warranty, drivers, and ownership records. It is usually printed on the chassis and may also appear in BIOS information or Dell utilities. The System Number on a BIOS password screen is the complete, device-specific value displayed by that exact screen. On some systems it may include familiar Service Tag characters plus an extra suffix — but it cannot be reconstructed from memory, and the sticker alone is not enough. Copy the full value directly from the screen. The suffix after the separator helps identify the password-screen family, but it is not a device identifier and not a password. The characters before it matter too. Don't add spaces, skip characters, swap similar letters and digits, or send only the last group."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Dell Security Manager keeps asking for a password?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If “This computer system is protected by a password authentication system” appears before Windows starts, identify the password type first. From a “Dell Security Manager” heading alone you cannot tell what is locked: startup, BIOS settings, or the storage drive. No universal factory password exists for all Dell laptops. A System or Admin password may have been set by you, a previous owner, or an IT department. “Admin” is the password type — not a hint to type “admin”. If you remember it, use it; if not, don't brute-force random lists."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Admin, System &amp; HDD passwords — how do they differ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Dell admin password requested by F2 BIOS Setup is not the Windows administrator password. Admin/Setup protects firmware settings, System can block startup, and a drive password is a separate case entirely. Checked before the operating system loads and can stop the boot. It is not a Windows password, PIN, or Microsoft account."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the 8FC8 suffix in your code mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If the code on your Dell password screen ends in “-8FC8”, then 8FC8 is just a suffix. It is not the full code, not a password, and not proof that a recovery method will work. The code looks like XXXXXXX-8FC8. The four characters after the dash are the suffix; the characters before the dash are also required for a compatibility check. “8FC8” alone is not enough."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "BIOS password or Windows password — which one is blocking you?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "“Reset my Dell laptop password” can mean several unrelated problems. The right path depends on when the prompt appears and what exactly it says. A System password is checked at power-on and can stop the machine before Windows. An Admin/Setup password protects changes inside F2 Setup even though Windows may still load. If one of these screens shows an error or system code, copy it exactly, including the suffix after the dash — but never publish the full code in comments or forums."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "BIOS Recovery vs. password reset — not the same thing",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "“Dell BIOS recovery” and “Dell BIOS password reset” sound similar but do not replace each other. One process repairs firmware; the other is about authentication. BIOS Recovery attempts to restore correct firmware after corruption or a failed update, using disk or USB methods on supported models. It is not a password-removal tool, and the process is not available or successful for every model and fault."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a default or master Dell BIOS password?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "There is no universal default Dell BIOS password. Admin and System passwords are set per device — there is no shared word for the whole lineup. “Not Set” means no password is assigned, not that there is a password to type in. Dell does not publish a factory or universal master password that unlocks any Dell computer. System, Admin/Setup, and Hard Drive passwords protect different things and may have been set by the owner, a previous owner, an employer, or corporate IT policy. A word from an internet list proves nothing about your device, and repeated guessing can cause delays or lockout."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body>
-    <div class="page">
-        <div class="wave-glow"></div>
-        <div class="wave-glow b"></div>
-        <header class="header">
-            <div class="logo"><span class="logo-text">BIOS<span class="accent">UNLOCK</span>TOOL</span></div>
-            <nav class="nav">
-                <a href="#how">How It Works</a>
-                <a href="#recover">Recover Password</a>
-                <a href="#faq">FAQ</a>
-            </nav>
-        </header>
-        <section class="hero">
-            <h1>Unlock Your Dell BIOS Password — Africa</h1>
-            <p class="subtitle">Dell System, Admin, or HDD/SSD password recovery serving South Africa, Kenya, Nigeria. All Dell models supported.</p>
-            <form class="code-form" action="/check" method="GET">
-                <input type="text" name="code" placeholder="Enter your 8FC8 / E7A8 / 595B code" required pattern="[A-Z0-9]{4}-[A-Z0-9]{4}" maxlength="9">
-                <button type="submit">Get Unlock Code →</button>
-            </form>
-            <p class="note">🔒 Secure • Instant Results • M-Pesa / Card Payment • 100% Money Back Guarantee</p>
-        </section>
-        <section id="how" class="how-it-works">
-            <h2>How It Works</h2>
-            <div class="steps">
-                <div class="step">1. Enter Your Code</div>
-                <div class="step">2. Pay KSh 1,500 / R 300</div>
-                <div class="step">3. Get Unlock Code Instantly</div>
-            </div>
-        </section>
-        <section id="faq" class="faq">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-item">
-                <h3>Is this safe?</h3>
-                <p>Yes — generates an official Dell master password matched to your hardware's unique code.</p>
-            </div>
-            <div class="faq-item">
-                <h3>What codes do you support?</h3>
-                <p>All current Dell BIOS prompt suffixes: 8FC8, E7A8, 595B, D35B, 2A7B, A95B, 1D3B, 6FF1, 1F66, 1F5A, BF97.</p>
-            </div>
-        </section>
-        <footer class="footer">
-            <p>© 2026 BiosUnlockTool. All rights reserved.</p>
-        </footer>
-    </div>
-    <script src="/assets/js/background.js" defer></script>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div id="bg-three"></div>
+  <div id="bg-fallback"></div>
+
+  <div class="page">
+    <!-- STICKY HEADER -->
+    <header class="header" role="banner">
+      <a class="logo" href="#" aria-label="BIOS ZONE — to top">
+        <div class="logo-mark" aria-hidden="true">
+          <!-- Марка: монітор із кодовими дужками (адаптовано з векторного шаблону Freepik
+               21077488, яке вибрав користувач). Лише верхня частина (без написів ASKMOUSE),
+               колір перебито на фірмовий градієнт: fill="none" + stroke=currentColor —
+               колір керується з CSS (.logo-mark color: white). Залишені рамка монітора
+               і силует екрана з кодом; viewBox обріжений по bbox марки (165..335 × 122..295). -->
+          <svg viewBox="160 118 180 182" fill="none">
+            <path d="M329.294,122.598H170.706c-2.797,0-5.065,2.268-5.065,5.065v95.354 c0,2.797,2.268,5.065,5.065,5.065h37.082c2.797,0,5.065-2.268,5.065-5.065c0-2.797-2.268-5.065-5.065-5.065h-32.017v-85.224 h148.459v85.224h-32.017c-2.797,0-5.065,2.268-5.065,5.065c0,2.797,2.268,5.065,5.065,5.065h37.082 c2.797,0,5.065-2.268,5.065-5.065v-95.354C334.359,124.866,332.092,122.598,329.294,122.598z" stroke="currentColor" stroke-width="5"/>
+            <path d="M292.212,242.543h-9.047c-0.267-6.883-1.172-12.62-4.263-17.232 c-4.217-6.293-11.478-9.386-23.836-10.009v-12.313h43.836c2.797,0,5.065-2.268,5.065-5.065v-44.666 c0-2.797-2.268-5.065-5.065-5.065h-97.804c-2.797,0-5.065,2.268-5.065,5.065v47.175c0,2.797,2.268,5.065,5.065,5.065h19.794 c2.797,0,5.065-2.268,5.065-5.065c0-2.798-2.268-5.065-5.065-5.065h-14.729v-37.045h87.673v34.536H250 c-2.797,0-5.065,2.268-5.065,5.065v17.383c-12.294,0.635-19.523,3.729-23.729,10.004c-3.091,4.612-3.997,10.35-4.263,17.232 h-9.155c-2.797,0-5.065,2.268-5.065,5.065c0,2.798,2.268,5.065,5.065,5.065h9.058c0.179,10.863,3.434,21.095,9.229,28.902 c6.298,8.485,14.814,13.158,23.979,13.158c9.165,0,17.681-4.673,23.98-13.158c5.795-7.807,9.049-18.039,9.228-28.902h8.951 c2.797,0,5.065-2.268,5.065-5.065C297.277,244.811,295.009,242.543,292.212,242.543z" stroke="currentColor" stroke-width="5"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="a">BIOS</span>
+          <span class="b">ZONE</span>
+        </div>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <nav class="nav-pills" id="primary-nav" aria-label="Primary">
+        <a class="nav-pill active" href="#product">Product</a>
+        <a class="nav-pill" href="#how-it-works">How it works</a>
+        <a class="nav-pill" href="#guides">Guides</a>
+      </nav>
+
+      <a class="header-cta" href="#buy" aria-label="Buy now">
+        <span class="cta-text">Buy now</span>
+        <span class="cta-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 17 L17 7" />
+            <path d="M8 7 H17 V16" />
+          </svg>
+        </span>
+      </a>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-visual">
+        <div class="eight-shape">
+          <div class="char char-8"></div>
+          <div class="char char-f"></div>
+          <div class="char char-c"></div>
+          <div class="char char-8-mirror"></div>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <span class="eyebrow">Dell BIOS password reset tool · Africa</span>
+
+        <h1 class="title">
+          <span class="title-line"><span class="word">DELL BIOS</span></span>
+          <span class="title-line"><span class="word">UNLOCK TOOL</span></span>
+        </h1>
+
+        <p class="hero-sub">
+          <span class="title-desc">Remove or recover any Dell BIOS password — admin, system, or HDD. Fast code delivery with private support across Africa.</span>
+          <span class="hero-models">
+            <svg class="models-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1.2 5.3 4.2 4.2c.4.4.4 1 0 1.4l-4.2 4.2a1 1 0 0 1-1.4-1.4l2.5-2.5H7.5a1 1 0 0 1 0-2h6.8l-2.5-2.5a1 1 0 0 1 1.4-1.4z"/></svg>
+            <span class="paren" aria-hidden="true">(</span> Latitude · Inspiron · XPS · Precision <span class="paren" aria-hidden="true">)</span>
+          </span>
+        </p>
+      </div>
+
+      <div class="hero-cta-row">
+        <a class="btn-buy" href="#buy">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c1.394 3.262-.343 6.053-4.164 6.053h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106H7.076l-.282 1.787a.641.641 0 0 0 .633.74h3.544c.457 0 .846-.334.918-.788l.037-.196.728-4.616.047-.255c.072-.454.46-.788.917-.788h.578c3.744 0 6.674-1.521 7.61-5.92.425-1.89.19-3.478-.872-4.61z"/></svg>
+          <span class="buy-label">Buy Tool</span>
+        </a>
+        <a class="btn-telegram" href="https://t.me/BiosZone_bot" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          Telegram Bot
+        </a>
+      </div>
+      <!-- Соціальний доказ: цифра з meta-description, тепер ВИДНА покупцеві (рев'ю конверсії 2026-09-09).
+           НЕ перебільшувати: якщо реальний обсяг інший — зняти цифру звідси І З meta-description одночасно.
+           Без «★ 4.9»: рейтинг вигаданий, реальних відгуків поки немає — вигадані цифри руйнують довіру. -->
+      <p class="hero-trust">Trusted by 2,500+ customers &middot; fast support across Africa</p>
+    </section>
+
+    <!-- PRODUCT GRID -->
+    <section class="products" id="product">
+      <h2 class="section-title">Our Products</h2>
+      <div class="products-grid">
+      <!-- Картки клікабельні → #buy з передобраним продуктом (рев'ю конверсії: раніше були мертві зони).
+           data-pick читається скриптом перед </body> і підсвічує відповідний тариф у buy-блоці. -->
+      <a class="clay-card product reveal-on-scroll" href="#buy" data-pick="reset">
+        <div class="prod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21C-2 14 4 4 12 9c8-5 14 5 12 12z"/></svg></div>
+        <h3>Reset Tool</h3>
+        <p>Generate BIOS password reset codes for any Dell laptop using Service Tag.</p>
+        <div class="price">$28.20</div>
+      </a>
+      <a class="clay-card product reveal-on-scroll" href="#buy" data-pick="remove">
+        <div class="prod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17L9 11l3 3 8-5"/><path d="M14 5h6v6"/></svg></div>
+        <h3>Remove Tool</h3>
+        <p>Permanently remove BIOS admin password without hardware changes.</p>
+        <div class="price">$17.45</div>
+      </a>
+      <a class="clay-card product reveal-on-scroll" href="#buy" data-pick="recovery">
+        <div class="prod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg></div>
+        <h3>Recovery Service</h3>
+        <p>Expert unlocks BIOS within 24 hours — warranty-safe, certified technicians.</p>
+        <div class="price">$49.99</div>
+      </a>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="steps" id="how-it-works">
+      <h2 class="section-title">How it works</h2>
+      <div class="step-row">
+        <div class="step-item reveal-on-scroll"><span class="n">1</span><span>Get Service Tag</span></div>
+        <div class="step-item reveal-on-scroll"><span class="n">2</span><span>Purchase tool</span></div>
+        <div class="step-item reveal-on-scroll"><span class="n">3</span><span>Enter tag, get code</span></div>
+        <div class="step-item reveal-on-scroll"><span class="n">4</span><span>Unlock BIOS</span></div>
+      </div>
+    </section>
+
+    <!-- BUY SECTION -->
+    <section class="buy-section" id="buy">
+      <div class="clay-card buy-card" data-pick-target>
+        <h2>Get instant access</h2>
+        <p>PayPal payment or Telegram bot — tool delivered in minutes.</p>
+        <p class="selected-plan" id="selectedPlan" role="status" aria-live="polite">Choose a service above to highlight it here.</p>
+        <div class="pay-row">
+          <button class="btn-paypal" id="paypalBtn" type="button" disabled aria-describedby="payNote">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c1.394 3.262-.343 6.053-4.164 6.053h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106H7.076l-.282 1.787a.641.641 0 0 0 .633.74h3.544c.457 0 .846-.334.918-.788l.037-.196.728-4.616.047-.255c.072-.454.46-.788.917-.788h.578c3.744 0 6.674-1.521 7.61-5.92.425-1.89.19-3.478-.872-4.61z"/></svg>
+            PayPal — coming soon
+          </button>
+          <a class="btn-tg" href="https://t.me/BiosZone_bot" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            @BiosZone_bot
+          </a>
+        </div>
+        <p class="pay-note" id="payNote" role="status">PayPal checkout is coming soon — the Telegram bot delivers the same tool right now.</p>
+      </div>
+    </section>
+
+    <!-- RELATED GUIDES (поглинає колишній FAQ з 3 пунктів — питання «моделі/швидкість/якщо не спрацював»
+         покриті гайдами і 2 ними ж відповідями в FAQPage-schema; секція видалена 2026-09-08) -->
+    <section class="related-guides" id="guides">
+      <h2 class="section-title">Related Guides</h2>
+      <p class="guides-note">Click a question to read the full guide — the interface and support path stay in English for cross-border customers.</p>
+
+      <details class="clay-card guide reveal-on-scroll">
+        <summary>Forgot your Dell BIOS password — what actually works?</summary>
+        <div class="guide-wrap"><div class="guide-body">
+          <p>On most modern Dell laptops, pulling the CMOS battery does <strong>not</strong> clear a System or Admin BIOS password. Before anything else, identify exactly which prompt you are seeing and carefully write down the full System Number shown on screen; for supported codes, a model-dependent recovery option may be available.</p>
+          <p>This guide covers <strong>Dell System and Admin prompts</strong>. HDD/SSD locks, BitLocker, and Windows sign-in need different recovery paths.</p>
+          <h3>Identify the password screen</h3>
+          <ul>
+            <li><strong>Before Windows starts</strong> — System / Power-on BIOS password → this guide applies.</li>
+            <li><strong>Inside F2 BIOS Setup</strong> — Admin / Setup password → often this guide applies.</li>
+            <li><strong>Screen says HDD, SSD or Drive Password</strong> — a storage lock → separate check needed.</li>
+            <li><strong>After Windows loads</strong> — a Windows account password or PIN → not a BIOS password.</li>
+          </ul>
+          <h3>What the code on screen means</h3>
+          <p>Some Dell password screens display a code like <strong>XXXXXXX-8FC8</strong>. Copy the entire code exactly as shown. The four characters after the dash are a suffix that helps identify which recovery option may fit — but the characters before the dash are required too. Never post the full code on forums or public chats: it is data tied to your specific device.</p>
+          <h3>What to do next</h3>
+          <ul>
+            <li>Determine whether the prompt appears before Windows, inside BIOS Setup, or on a drive-password screen.</li>
+            <li>Write down the full on-screen code, including the suffix after the dash.</li>
+            <li>Check whether recovery is available for that code <em>before</em> paying.</li>
+          </ul>
+          <h3>If the current password is still known</h3>
+          <p>Power on, tap <strong>F2</strong> at the Dell logo, open <strong>Security</strong> or <strong>Passwords</strong>, select the password to remove, enter the current password, leave both new-password fields empty and confirm each empty field with Enter, then apply, save, and exit. Menus differ by model — use the service manual for your exact machine.</p>
+          <h3>Can recovery be impossible?</h3>
+          <p>Yes. A suffix alone guarantees nothing. <strong>Master Password Lockout</strong> can disable code-based recovery, and HDD/SSD passwords plus some NVMe cases require a separate check.</p>
+          <p><a href="https://nexxgsm.com/blog/dell-bios-forgotten-password?lang=en-US" target="_blank" rel="noopener">Read the original guide →</a></p>
+        </div></div>
+      </details>
+
+      <details class="clay-card guide reveal-on-scroll">
+        <summary>System Number vs. Service Tag — which one do you send?</summary>
+        <div class="guide-wrap"><div class="guide-body">
+          <p><strong>Service Tag</strong> is Dell's identifier for support, warranty, drivers, and ownership records. It is usually printed on the chassis and may also appear in BIOS information or Dell utilities. The <strong>System Number on a BIOS password screen</strong> is the complete, device-specific value displayed by that exact screen. On some systems it may include familiar Service Tag characters plus an extra suffix — but it cannot be reconstructed from memory, and the sticker alone is not enough. Copy the full value directly from the screen.</p>
+          <h3>Why the full on-screen value matters</h3>
+          <p>The suffix after the separator helps identify the password-screen family, but it is not a device identifier and not a password. The characters before it matter too. Don't add spaces, skip characters, swap similar letters and digits, or send only the last group.</p>
+          <h3>Keep identifiers private</h3>
+          <ul>
+            <li>Confirm the prompt appears before Windows and note whether it says System, Admin, Setup, HDD, or SSD.</li>
+            <li>Copy the System Number in full, keeping every character and the separator.</li>
+            <li>Never post identifiers on forums, reviews, comments, or indexable screenshots.</li>
+            <li>Share data only through a private form.</li>
+          </ul>
+          <h3>Common mistakes</h3>
+          <ul>
+            <li>Sending the Service Tag when the form asks for the full on-screen System Number.</li>
+            <li>Sending only the suffix, or a cropped photo that hides the prompt type.</li>
+            <li>Mistaking a BitLocker or Windows sign-in request for a Dell BIOS password.</li>
+            <li>Assuming two Dells of the same model share the same prompt and recovery result.</li>
+          </ul>
+          <p><a href="https://nexxgsm.com/blog/dell-system-number-vs-service-tag?lang=en-US" target="_blank" rel="noopener">Read the original guide →</a></p>
+        </div></div>
+      </details>
+
+      <details class="clay-card guide reveal-on-scroll">
+        <summary>Dell Security Manager keeps asking for a password?</summary>
+        <div class="guide-wrap"><div class="guide-body">
+          <p>If “This computer system is protected by a password authentication system” appears before Windows starts, identify the password type first. From a “Dell Security Manager” heading alone you cannot tell what is locked: startup, BIOS settings, or the storage drive.</p>
+          <h3>Match your screen wording</h3>
+          <ul>
+            <li><strong>Enter System Password / System Password</strong> — if it halts boot before Windows, check the System BIOS password path.</li>
+            <li><strong>Please type in the system or administrator password</strong> — save the full text and the System Number shown nearby.</li>
+            <li><strong>Admin Password / Unlock Setup in F2</strong> — BIOS settings may be locked even though Windows starts.</li>
+            <li><strong>HDD / SSD / Hard Drive Password</strong> — a storage lock, verified separately; no System/Admin key needed.</li>
+            <li><strong>Windows PIN or BitLocker recovery</strong> — needs account recovery or a BitLocker key, not a BIOS service.</li>
+          </ul>
+          <h3>Is there a standard Dell password?</h3>
+          <p>No universal factory password exists for all Dell laptops. A System or Admin password may have been set by you, a previous owner, or an IT department. “Admin” is the password type — not a hint to type “admin”. If you remember it, use it; if not, don't brute-force random lists.</p>
+          <h3>Does the Dell model change the answer?</h3>
+          <p>Latitude, Inspiron, Vostro, XPS, and Precision differ in menus and security options. A model name like “Dell Latitude 5400 admin password” describes a symptom, not a recovery password. The exact model picks the right manual; the actual screen decides which options exist.</p>
+          <h3>Before ordering a recovery password</h3>
+          <p>If the laptop was recently bought second-hand, ask the seller to remove the password. For a managed work device, contact your IT administrator. A known current password can be changed in the BIOS itself. Removing the CMOS battery or reinstalling Windows are not universal fixes, and Master Password Lockout can disable code-based recovery entirely.</p>
+          <p><a href="https://nexxgsm.com/blog/dell-security-manager-password?lang=en-US" target="_blank" rel="noopener">Read the original guide →</a></p>
+        </div></div>
+      </details>
+
+      <details class="clay-card guide reveal-on-scroll">
+        <summary>Admin, System &amp; HDD passwords — how do they differ?</summary>
+        <div class="guide-wrap"><div class="guide-body">
+          <p>A Dell admin password requested by F2 BIOS Setup is <strong>not</strong> the Windows administrator password. Admin/Setup protects firmware settings, System can block startup, and a drive password is a separate case entirely.</p>
+          <h3>System password</h3>
+          <p>Checked before the operating system loads and can stop the boot. It is not a Windows password, PIN, or Microsoft account.</p>
+          <h3>Admin or Setup password</h3>
+          <p>Protects firmware settings. Windows may still start, but boot order, Secure Boot, or virtualization stay locked.</p>
+          <h3>Forgot the Admin password but Windows starts?</h3>
+          <p>That means only BIOS settings are protected — no need to reset Windows. If you remember the BIOS Admin password, change it in the normal settings using your model's manual. If not, ask whoever configured the laptop, then save the exact Setup prompt and the System Number if shown. Don't change Secure Boot, drive mode, or TPM while hunting for the password: those changes don't reset it and can affect booting or access to encrypted data.</p>
+          <h3>HDD or SSD password</h3>
+          <p>Protects the storage device itself — not Windows sign-in and not BIOS settings. It is a separate data-access case, and release options don't exist for every drive: Dell states it cannot create release codes for NVMe SSDs.</p>
+          <h3>Windows and BitLocker are separate systems</h3>
+          <p>A Windows password or PIN controls sign-in. BitLocker encrypts the Windows volume and asks for a 48-digit recovery key. Neither is a Dell System, Admin, or HDD/SSD password.</p>
+          <p><a href="https://nexxgsm.com/blog/dell-bios-password-types?lang=en-US" target="_blank" rel="noopener">Read the original guide →</a></p>
+        </div></div>
+      </details>
+
+      <details class="clay-card guide reveal-on-scroll">
+        <summary>What does the 8FC8 suffix in your code mean?</summary>
+        <div class="guide-wrap"><div class="guide-body">
+          <p>If the code on your Dell password screen ends in “-8FC8”, then 8FC8 is just a suffix. It is not the full code, not a password, and not proof that a recovery method will work.</p>
+          <h3>Copy the full code</h3>
+          <p>The code looks like <strong>XXXXXXX-8FC8</strong>. The four characters after the dash are the suffix; the characters before the dash are also required for a compatibility check. “8FC8” alone is not enough.</p>
+          <h3>What 8FC8 can and cannot tell you</h3>
+          <ul>
+            <li>It helps identify the password-screen format.</li>
+            <li>It does not identify the owner or prove ownership.</li>
+            <li>It is not a universal Dell master password.</li>
+            <li>It does not guarantee compatibility, availability, or a successful recovery.</li>
+            <li>It does not mean the same result for every Latitude, Inspiron, Vostro, or XPS.</li>
+          </ul>
+          <h3>Before requesting recovery</h3>
+          <p>Determine whether this is System at power-on or Admin/Setup in F2 — they are different password types. Stop if the screen says HDD, SSD, or Drive Password: storage locks are handled separately. For Windows sign-in use account recovery; for BitLocker use Microsoft's key path. Write down every character including the dash and suffix, and never publish the code.</p>
+          <h3>When recovery may be unavailable</h3>
+          <p>If Master Password Lockout was enabled before the password was lost, code-based recovery is disabled. The remaining repair option may be replacing the motherboard or the locked drive. HDD/SSD passwords are handled separately, and Dell creates no release codes for NVMe SSDs. The 8FC8 suffix does not change these limits.</p>
+          <p><a href="https://nexxgsm.com/blog/dell-8fc8-bios-password-code?lang=en-US" target="_blank" rel="noopener">Read the original guide →</a></p>
+        </div></div>
+      </details>
+
+      <details class="clay-card guide reveal-on-scroll">
+        <summary>BIOS password or Windows password — which one is blocking you?</summary>
+        <div class="guide-wrap"><div class="guide-body">
+          <p>“Reset my Dell laptop password” can mean several unrelated problems. The right path depends on when the prompt appears and what exactly it says.</p>
+          <h3>Quick triage</h3>
+          <ul>
+            <li><strong>Right after power-on, before Windows</strong> — Dell System / BIOS password → copy the exact text and full code.</li>
+            <li><strong>Only when opening F2 Setup</strong> — Dell Admin / Setup password → use the known password or the matching recovery path.</li>
+            <li><strong>Screen says HDD, SSD, or Drive Password</strong> — a storage lock → a separate data-access case.</li>
+            <li><strong>Windows photo, email, PIN, or sign-in options</strong> — Windows or Microsoft account → use Microsoft recovery.</li>
+            <li><strong>Blue BitLocker screen</strong> — find the 48-digit recovery key in the owner's Microsoft account or via IT.</li>
+          </ul>
+          <h3>When it IS a Dell BIOS password</h3>
+          <p>A System password is checked at power-on and can stop the machine before Windows. An Admin/Setup password protects changes inside F2 Setup even though Windows may still load. If one of these screens shows an error or system code, copy it exactly, including the suffix after the dash — but never publish the full code in comments or forums.</p>
+          <h3>When BIOS is NOT involved</h3>
+          <p>A forgotten Windows PIN needs no BIOS unlock. A Microsoft account password is recovered through Microsoft. BitLocker needs its recovery key, not a Dell BIOS code. An HDD or SSD password affects data access and is verified separately.</p>
+          <p><a href="https://nexxgsm.com/blog/dell-laptop-password-bios-vs-windows?lang=en-US" target="_blank" rel="noopener">Read the original guide →</a></p>
+        </div></div>
+      </details>
+
+      <details class="clay-card guide reveal-on-scroll">
+        <summary>BIOS Recovery vs. password reset — not the same thing</summary>
+        <div class="guide-wrap"><div class="guide-body">
+          <p>“Dell BIOS recovery” and “Dell BIOS password reset” sound similar but do not replace each other. One process repairs firmware; the other is about authentication.</p>
+          <h3>Quick comparison</h3>
+          <ul>
+            <li><strong>Black screen or POST failure after a BIOS update</strong> → BIOS Recovery (repairs damaged or incomplete firmware).</li>
+            <li><strong>PC works but BIOS settings must return to stock</strong> → load BIOS defaults (configuration only; passwords stay).</li>
+            <li><strong>Password prompt before Windows</strong> → System password support.</li>
+            <li><strong>F2 Setup opens but settings are locked</strong> → Admin / Setup password support.</li>
+            <li><strong>HDD, SSD, or Drive Password shown</strong> → storage-password support (a separate case).</li>
+            <li><strong>Windows PIN or Microsoft account</strong> → Windows account recovery.</li>
+            <li><strong>Blue BitLocker recovery screen</strong> → the owner's 48-digit key.</li>
+          </ul>
+          <h3>What BIOS Recovery actually does</h3>
+          <p>BIOS Recovery attempts to restore correct firmware after corruption or a failed update, using disk or USB methods on supported models. It is not a password-removal tool, and the process is not available or successful for every model and fault.</p>
+          <h3>Before reflashing firmware</h3>
+          <ul>
+            <li>Use the image for your exact Dell model.</li>
+            <li>Locate your BitLocker key in advance — a firmware change can trigger the recovery screen.</li>
+            <li>Never cut power during recovery or an update.</li>
+            <li>If the computer only asks for a password, don't run BIOS Recovery hoping to remove authentication.</li>
+          </ul>
+          <p><a href="https://nexxgsm.com/blog/dell-bios-recovery-vs-password-reset?lang=en-US" target="_blank" rel="noopener">Read the original guide →</a></p>
+        </div></div>
+      </details>
+
+      <details class="clay-card guide reveal-on-scroll">
+        <summary>Is there a default or master Dell BIOS password?</summary>
+        <div class="guide-wrap"><div class="guide-body">
+          <p>There is no universal default Dell BIOS password. Admin and System passwords are set per device — there is no shared word for the whole lineup. “Not Set” means no password is assigned, not that there is a password to type in.</p>
+          <h3>The direct answer</h3>
+          <p>Dell does not publish a factory or universal master password that unlocks any Dell computer. System, Admin/Setup, and Hard Drive passwords protect different things and may have been set by the owner, a previous owner, an employer, or corporate IT policy. A word from an internet list proves nothing about your device, and repeated guessing can cause delays or lockout.</p>
+          <h3>“Default password for Latitude 5400 / 7490”?</h3>
+          <p>Those searches don't produce a common combination. Model manuals describe System and Admin as passwords you assign when none is set. Latitude 5400 and E5400 are different machines — manuals need the exact name. The same applies to Inspiron, Vostro, XPS, and Precision.</p>
+          <h3>Master Password Lockout can block recovery</h3>
+          <p>On some business systems, Master Password Lockout may be enabled. That setting can disable the usual recovery path, so no service should guarantee a result for every configuration. Check the full on-screen prompt before accepting any result or price.</p>
+          <h3>Protect your identifiers</h3>
+          <ul>
+            <li>Never post the Service Tag, System Number, purchase documents, or a full password-screen photo publicly.</li>
+            <li>Don't install unknown utilities that promise to reset any firmware password.</li>
+            <li>Don't reuse a guessed firmware password for other accounts or devices.</li>
+            <li>Don't expect a CMOS battery pull to clear a modern Dell laptop's password.</li>
+          </ul>
+          <p><a href="https://nexxgsm.com/blog/dell-bios-default-master-password?lang=en-US" target="_blank" rel="noopener">Read the original guide →</a></p>
+        </div></div>
+      </details>
+    </section>
+
+    <!-- CTA після гайдів (рев'ю конверсії 2026-09-09): після 2000+ слів гайдів покупець мав
+         скролити назад угору, щоб купити. Закриває конверсійний цикл на найдгарнішій ділянці. -->
+    <section class="after-guides-cta reveal-on-scroll">
+      <h2>Ready to unlock your Dell?</h2>
+      <p>Check your screen code, choose the right service, and get private help for your next step across Africa.</p>
+      <div class="hero-cta-row">
+        <a class="btn-buy" href="#buy">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c1.394 3.262-.343 6.053-4.164 6.053h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106H7.076l-.282 1.787a.641.641 0 0 0 .633.74h3.544c.457 0 .846-.334.918-.788l.037-.196.728-4.616.047-.255c.072-.454.46-.788.917-.788h.578c3.744 0 6.674-1.521 7.61-5.92.425-1.89.19-3.478-.872-4.61z"/></svg>
+          <span class="buy-label">Buy Tool</span>
+        </a>
+        <a class="btn-telegram" href="https://t.me/BiosZone_bot" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          Telegram Bot
+        </a>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <p>&copy; 2026 <strong>BIOS ZONE</strong> by <a href="https://nexxgsm.com/" target="_blank" rel="noopener">NexxGSM Service Point S.R.L.</a> &middot; Bucharest, Romania</p>
+      <p class="footer-note">Dell BIOS password tools &amp; service &middot; BIOS ZONE is a product of NexxGSM — the same team behind the nexxgsm.com knowledge base.</p>
+    </footer>
+  </div>
+
+  <!-- Канонічний фон (2026-09-10): один CSS gradient працює на всіх екранах;
+       wide-сцена додає поверх нього прозорий 3D-ПК, а mobile не запускає WebGL.
+       Так фон не стає строкатим і не залежить від важкого шумового shader-а.
+       CSS-штамп: ?v=20260910u; сцена: ?v=20260910p; vendor three: ?v=20260909c. -->
+  <link rel="preload" as="script" media="(min-width: 701px)" href="/assets/js/vendor/three.module.min.js?v=20260909c">
+  <script type="module">
+    if (window.matchMedia('(min-width: 701px)').matches) {
+      import('/assets/js/bg-scene-c.js?v=20260910p');
+    }
+  </script>
+
+  <script>
+    // Бургер-меню: кнопка керує aria-expanded, панель ховається класом .open.
+    // Закриття: клік по посиланню, Escape, клік поза хедером — інакше панель
+    // зависає відкритою поверх контенту на мобільних.
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var nav = document.getElementById('primary-nav');
+      if (!toggle || !nav) return;
+      function close() {
+        nav.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Open menu');
+      }
+      toggle.addEventListener('click', function () {
+        var open = nav.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      });
+      nav.addEventListener('click', function (e) { if (e.target.closest('a')) close(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+      document.addEventListener('click', function (e) {
+        if (nav.classList.contains('open') && !e.target.closest('.header')) close();
+      });
+      // Повернення на десктоп: панель не повинна залишатись відкритою поверх контенту
+      var desktopMq = window.matchMedia('(min-width: 901px)');
+      if (desktopMq.addEventListener) desktopMq.addEventListener('change', function (e) { if (e.matches) close(); });
+    })();
+
+    // Scroll-spy: .active пігулка має показувати реальний блок на екрані,
+    // інакше вона бреше користувачу ("Product" активний навіть коли читаєш FAQ).
+    (function () {
+      var pills = document.querySelectorAll('.nav-pill[href^="#"]');
+      if (!pills.length || !('IntersectionObserver' in window)) return;
+      var map = {};
+      pills.forEach(function (p) { map[p.getAttribute('href').slice(1)] = p; });
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          pills.forEach(function (p) { p.classList.remove('active'); });
+          var pill = map[en.target.id];
+          if (pill) pill.classList.add('active');
+        });
+      }, { rootMargin: '-40% 0px -55% 0px' });
+      Object.keys(map).forEach(function (id) {
+        var s = document.getElementById(id);
+        if (s) io.observe(s);
+      });
+    })();
+
+    // Ак intentionally: guides = акордеон "тільки один відкритий" + плавна анімація 0fr->1fr.
+    // <details> сам не анімує висоту, тому перехоплюємо toggle: анімуємо .guide-wrap (grid-rows),
+    // а атрибут open ставимо одразу (вміст прихований overflow:hidden обгортки).
+    // .expanding тримає суцільний фон під час анімації, поки [open]-селектор ще не активний/уже не активний.
+    (function () {
+      var guides = Array.prototype.slice.call(document.querySelectorAll('details.guide'));
+      if (!guides.length) return;
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function closeNow(g) {
+        g.open = false; g.classList.remove('open'); g.classList.remove('expanding');
+      }
+      guides.forEach(function (g) {
+        g.addEventListener('toggle', function () {
+          if (!g.open) return; // закриття обробляється вручну нижче
+          // відкриття: закрити інші (поведінка акордеона)
+          guides.forEach(function (o) { if (o !== g && o.open) closeNow(o); });
+          g.classList.add('open');
+          if (reduced) return; // без анімації — просто стан
+          requestAnimationFrame(function () {
+            g.classList.add('expanding');
+            setTimeout(function () { g.classList.remove('expanding'); }, 350);
+          });
+        });
+        g.addEventListener('click', function (e) {
+          // summary клікається стандартно; перехоплюємо щоб анімувати закриття
+          if (!e.target.closest('summary')) return;
+          if (g.open) {
+            e.preventDefault();
+            g.classList.remove('open');
+            g.classList.add('expanding');
+            setTimeout(function () {
+              g.classList.remove('expanding');
+              g.open = false;
+            }, reduced ? 0 : 320);
+          }
+        });
+      });
+    })();
+
+    // PayPal: справжній чекаут ще не підключений. Замість блокуючого alert()
+    // показуємо inline-статус і одразу пропонуємо робочу альтернативу (Telegram).
+    (function () {
+      var btn = document.getElementById('paypalBtn');
+      var note = document.getElementById('payNote');
+      if (!btn || !note) return;
+      btn.addEventListener('click', function () {
+        note.hidden = false;
+        var tg = document.querySelector('.btn-tg');
+        if (tg) tg.focus({ preventScroll: true });
+      });
+    })();
+
+    // Передібір продукту: клік по картці (data-pick) підсвічує відповідний тариф у buy-блоці.
+    // Без цього коментар над картками обіцяв би функцію, якої не існує (2026-09-09).
+    (function () {
+      var target = document.querySelector('[data-pick-target]');
+      var status = document.getElementById('selectedPlan');
+      if (!target) return;
+      var labels = { reset: 'Reset Tool · $28.20', remove: 'Remove Tool · $17.45', recovery: 'Recovery Service · $49.99' };
+      document.querySelectorAll('.product[data-pick]').forEach(function (card) {
+        function pick() {
+          document.querySelectorAll('.product.selected').forEach(function (c) { c.classList.remove('selected'); });
+          card.classList.add('selected');
+          target.setAttribute('data-selected', card.getAttribute('data-pick'));
+          if (status) status.textContent = 'Selected: ' + (labels[card.getAttribute('data-pick')] || 'service');
+        }
+        card.addEventListener('click', pick);
+        card.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); pick(); }
+        });
+      });
+    })();
+
+    // Scroll-driven reveal fallback: CSS view-timeline reverses naturally in
+    // supporting browsers; older engines reveal once through IntersectionObserver.
+    // The page stays readable without either API and reduced-motion skips movement.
+    (function () {
+      var items = Array.prototype.slice.call(document.querySelectorAll('.reveal-on-scroll'));
+      if (!items.length) return;
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var hasTimeline = window.CSS && CSS.supports && CSS.supports('animation-timeline: view()');
+      if (reduced || hasTimeline || !('IntersectionObserver' in window)) {
+        if (reduced || !hasTimeline) items.forEach(function (item) { item.classList.add('is-visible'); });
+        return;
+      }
+      var observer = new IntersectionObserver(function (entries, current) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          current.unobserve(entry.target);
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+      items.forEach(function (item) { observer.observe(item); });
+    })();
+  </script>
 </body>
 </html>
