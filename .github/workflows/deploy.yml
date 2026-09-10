@@ -29,14 +29,6 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler
 
-      - name: Ensure Pages project exists
-        # pages-action@v1 НЕ створює проєкт сам (спершу робить GET і падає з
-        # "Project not found"), тому створюємо ідемпотентно тут.
-        run: wrangler pages project create biosunlocktool --production-branch main || echo "project already exists"
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ env.CF_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ env.CF_ACCOUNT_ID }}
-
       - name: Build
         run: node build.js
 
@@ -44,7 +36,18 @@ jobs:
         # pages-action@v1 використовує застарілий API-шлях getProject, який
         # може отримати Cloudflare 429 ще до завантаження файлів. Wrangler
         # виконує нативний Pages deploy і використовує ті самі secrets.
-        run: wrangler pages deploy . --project-name biosunlocktool
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if wrangler pages deploy . --project-name biosunlocktool; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Cloudflare Pages deploy failed; retrying after 60s (attempt ${attempt}/3)"
+              sleep 60
+            fi
+          done
+          exit 1
         env:
           CLOUDFLARE_API_TOKEN: ${{ env.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ env.CF_ACCOUNT_ID }}
