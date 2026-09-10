@@ -90,15 +90,68 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
 html::before {
   content: '';
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  /* Остання корекція користувача: ще трохи темніше, з додатковим середнім
-     синім стопом; ПК лишається без змін. */
-  background: linear-gradient(45deg, #0d3f67 0%, #082b47 50%, #010508 100%);
+  /* Глибокий navy у дусі синього поля американського прапора: трохи
+     темніший за попередню палітру, але все ще достатньо синій для атмосфери. */
+  background: linear-gradient(45deg, #0b2e55 0%, #071d39 50%, #01050d 100%);
   background-size: 200% 200%;
   animation: pageGradient 12s ease infinite;
 }
 @keyframes pageGradient {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
+}
+
+/* Motion layer: CSS timelines are an enhancement over the readable static page.
+   Unsupported browsers use the IntersectionObserver fallback in index.html. */
+.scroll-progress {
+  position: fixed; inset: 0 0 auto; z-index: 1000;
+  height: 3px; pointer-events: none;
+  transform: scaleX(0); transform-origin: left center;
+  background: linear-gradient(90deg, #174d83, var(--accent));
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      animation: scrollProgress linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+@keyframes scrollProgress { to { transform: scaleX(1); } }
+
+.reveal-on-scroll { opacity: 1; transform: none; }
+.has-motion-js .reveal-on-scroll:not(.is-visible) {
+  opacity: 0; transform: translateY(28px) scale(.97);
+}
+.has-motion-js .reveal-on-scroll.is-visible {
+  opacity: 1; transform: none;
+  transition: opacity .55s ease, transform .55s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .has-motion-js .reveal-on-scroll {
+      opacity: 1; transform: none;
+      animation: revealOnScroll linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+    .products-grid .reveal-on-scroll:nth-child(2),
+    .step-row .reveal-on-scroll:nth-child(2) { animation-delay: 70ms; }
+    .products-grid .reveal-on-scroll:nth-child(3),
+    .step-row .reveal-on-scroll:nth-child(3) { animation-delay: 140ms; }
+    .step-row .reveal-on-scroll:nth-child(4) { animation-delay: 210ms; }
+  }
+}
+@keyframes revealOnScroll {
+  from { opacity: 0; transform: translateY(28px) scale(.97); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress { display: none; }
+  .has-motion-js .reveal-on-scroll,
+  .has-motion-js .reveal-on-scroll:not(.is-visible) {
+    opacity: 1; transform: none; animation: none; transition: none;
+  }
 }
 #bg-three { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 #bg-three canvas { display: block; width: 100% !important; height: 100% !important; }
