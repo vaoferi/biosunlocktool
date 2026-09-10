@@ -163,6 +163,71 @@ html[data-market="india"] .buy-card[data-selected] {
   html[data-market="india"]::after { animation: none; }
 }
 
+/* Poland market theme: a deliberately bolder cultural experiment than the
+   shared US atmosphere. Graphite, warm paper and carmine create a print-shop /
+   industrial signal without reproducing the flag literally. The layout,
+   conversion controls and 8FC8 figures remain shared for clean A/B comparison. */
+html[data-market="poland"] {
+  --bg: #111216;
+  --text: #fff9f1;
+  --text-2: #e3d9cf;
+  --mute: #c0b3aa;
+  --card: rgba(24, 23, 25, 0.56);
+  --card-border: rgba(229, 82, 82, 0.34);
+  --glass-bg: rgba(17, 17, 20, 0.66);
+  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.64);
+  --accent: #e05252;
+  --accent-2: #e7c99a;
+}
+
+html[data-market="poland"]::before {
+  background:
+    radial-gradient(ellipse at 78% 15%, rgba(224, 82, 82, 0.5) 0%, transparent 28%),
+    radial-gradient(ellipse at 15% 78%, rgba(231, 201, 154, 0.19) 0%, transparent 30%),
+    linear-gradient(126deg, #090b10 0%, #1a1118 37%, #3a131c 59%, #0c0d12 100%);
+  background-size: 165% 165%;
+  animation: polandAtmosphere 22s cubic-bezier(.45, 0, .25, 1) infinite alternate;
+}
+
+html[data-market="poland"]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(115deg, transparent 0 46%, rgba(255, 247, 236, 0.12) 47%, transparent 48%),
+    repeating-linear-gradient(0deg, rgba(255, 247, 236, 0.045) 0 1px, transparent 1px 7px);
+  background-size: 260px 260px, 100% 8px;
+  mix-blend-mode: screen;
+  animation: polandPaperDrift 30s linear infinite;
+}
+
+@keyframes polandAtmosphere {
+  0% { background-position: 12% 42%; }
+  100% { background-position: 88% 58%; }
+}
+
+@keyframes polandPaperDrift {
+  from { transform: translate3d(-1.5%, -0.5%, 0) rotate(-0.15deg); }
+  to { transform: translate3d(1.5%, 0.5%, 0) rotate(0.15deg); }
+}
+
+html[data-market="poland"] ::selection {
+  background: rgba(224, 82, 82, 0.48);
+}
+
+html[data-market="poland"] .buy-card[data-selected] {
+  border-color: rgba(224, 82, 82, 0.82);
+  box-shadow: 0 0 0 1px rgba(224, 82, 82, 0.5), var(--glass-shadow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-market="poland"]::before,
+  html[data-market="poland"]::after { animation: none; }
+}
+
 /* Motion layer: CSS timelines are an enhancement over the readable static page.
    Unsupported browsers use the IntersectionObserver fallback in index.html. */
 .scroll-progress {
