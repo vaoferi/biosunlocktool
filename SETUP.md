@@ -5,9 +5,9 @@
 ## Поточний стан
 
 - ✅ Канонічна сторінка (en-US) лежить у корені репо (`index.html` + `assets/`) — це те, що бачить `biosunlocktool.com`;
-- ✅ `locales/<locale>/` — місце майбутніх мовних копій; `in/de/pl/af` поки заглушки;
+- ✅ `locales/<locale>/` — місце майбутніх мовних копій; `de/pl/af` поки заглушки, а `in` уже використовує English canonical з India-атмосферою;
 - ✅ GitHub Action `.github/workflows/deploy.yml` деплоїть на Pages при кожному пуші в `main`;
-- ✅ `functions/_middleware.ts` роутить субдомени `in./de./pl./af.` на свої локалі.
+- ✅ `functions/_middleware.ts` роутить `de./pl./af.` на локалі; `us./ca./in.` залишаються на canonical landing.
 
 ## Крок 1 — секрети GitHub (1 хв)
 
@@ -26,7 +26,7 @@
 ## Крок 3 — домени (після першого деплою)
 
 1. Dashboard → Workers & Pages → проєкт **biosunlocktool** → **Custom domains** → Set up a custom domain.
-2. Додай: `biosunlocktool.com`, `www.biosunlocktool.com`, `in.`, `de.`, `pl.`, `af.biosunlocktool.com`.
+2. Додай: `biosunlocktool.com`, `www.biosunlocktool.com`, `us.`, `ca.`, `in.`, `de.`, `pl.`, `af.biosunlocktool.com`.
 3. Домен уже в Cloudflare DNS → сертифікат видасться автоматично; CNAME-записи створяться самі.
 
 ## Крок 4 — SSL

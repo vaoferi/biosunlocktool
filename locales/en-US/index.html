@@ -12,7 +12,9 @@
     (function () {
       var host = window.location.hostname.toLowerCase();
       var subdomain = host.split('.')[0];
-      var market = subdomain === 'india' ? 'india' : 'us';
+      // The two-letter market code is canonical; keep the earlier full-name
+      // alias during the domain migration so existing previews do not go dark.
+      var market = (subdomain === 'in' || subdomain === 'india') ? 'india' : 'us';
       document.documentElement.dataset.market = market;
     }());
   </script>

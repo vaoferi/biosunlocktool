@@ -5,7 +5,7 @@
 /
 ├── locales/
 │   ├── en-US/      → biosunlocktool.com
-│   ├── en-IN/      → in.biosunlocktool.com
+│   ├── en-IN/      → legacy Hindi stub (not routed by default)
 │   ├── de-DE/      → de.biosunlocktool.com
 │   ├── pl-PL/      → pl.biosunlocktool.com
 │   └── af-ZA/      → af.biosunlocktool.com
@@ -30,8 +30,10 @@ npm run pages:deploy # Same as build
 ## Routes
 | Domain | Locale |
 |--------|--------|
-| biosunlocktool.com | en-US |
-| in.biosunlocktool.com | en-IN |
+| biosunlocktool.com | en-US / US canonical |
+| us.biosunlocktool.com | en-US / US alias |
+| ca.biosunlocktool.com | en-US / Canada English experiment |
+| in.biosunlocktool.com | en-US / India atmosphere |
 | de.biosunlocktool.com | de-DE |
 | pl.biosunlocktool.com | pl-PL |
 | af.biosunlocktool.com | af-ZA |
