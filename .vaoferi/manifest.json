@@ -1,0 +1,39 @@
+{
+  "installed_at": "2026-09-25T13:32:44Z",
+  "owned_files": {
+    ".agents/skills/vaoferi-bootstrap/SKILL.md": "6663b08c68a7261373d4e5b6ea11036cdd3fc4d01b2ad025259ea4119a323cb9",
+    ".agents/skills/vaoferi-dependencies/SKILL.md": "062c2d5455436a71eb8d66972222c5421232c1f9c77a67ee0bcd39ef12117de2",
+    ".agents/skills/vaoferi-deploy/SKILL.md": "3e3fbe953e62b0568d2b5bb77b00b7fbe84c7c12680932dbf19b9818731df24a",
+    ".agents/skills/vaoferi-design-skill/SKILL.md": "9f6ef1e2d00a930f80b9cf7903fb1e9efc211e7ced05508f5b3ad9e4796bfa25",
+    ".agents/skills/vaoferi-design-skill/config/component-libraries.json": "2d82a306cd6097e83ee074347f3fba5938b2f7a2659f487364f3f2be1d7c48f8",
+    ".agents/skills/vaoferi-design-skill/references/action-contract.md": "cbc62e61941bd15173387a7e184b9c54b91783d8184fc117eaeb19de30a4d6c2",
+    ".agents/skills/vaoferi-design-skill/references/admin-workspace.md": "debd51cdeea821ee53d9fa3fe05f5d6dae2c841666f28cce722c096989ef538f",
+    ".agents/skills/vaoferi-design-skill/references/component-sources.md": "f76b2f17e7a3d5963b80547ff01c380bb175203e6442b8f087708e1486088dff",
+    ".agents/skills/vaoferi-design-skill/references/lifecycle.md": "dc07c59620ca92834c8f6295bccd37f0c7e9bb525e85333549b537af65322258",
+    ".agents/skills/vaoferi-design-skill/references/quality-gates.md": "2705c7e8d57e0910e405fa32b0ad4dd71635d434f6668ada1c0f9fa2309b6b59",
+    ".agents/skills/vaoferi-design-skill/references/scopes.md": "7a07ed12c59ad8ddd9d1878a5d57b609b98989899a8a49a2a203652bc0739a16",
+    ".agents/skills/vaoferi-design-skill/references/skillopt-and-architecture.md": "18d7f1285d35c06b52c2cb1b8a42f2ca453053971f844f7d0b8521a8fdf23542",
+    ".agents/skills/vaoferi-design-skill/references/stages.md": "5c546e1d0d7ad496bc9d52924a943ccae6797dc1f40ba8d051011f84f4da5c10",
+    ".agents/skills/vaoferi-design-skill/references/verification.md": "4d0eab3feea729a925408f50ed698dc61b8190bc463bdcaf473b8747a29b9b7d",
+    ".agents/skills/vaoferi-design-skill/scripts/check_skill_structure.py": "dc2775deb342c3666c8c181320804af10c1a93995365c88f4965fb6692b1ecc0",
+    ".agents/skills/vaoferi-design-skill/scripts/get_component_snippet.py": "45ae9515cbe7794bce119bd5a4b0375cca10a1a281865c59d25d32273b0ea448",
+    ".agents/skills/vaoferi-design-skill/scripts/validate_snippets_source.py": "dbc56e178632d70277376c82976c1188b8abe0ac37bcc793cf0dcc8ae3faf563",
+    ".agents/skills/vaoferi-engineering/SKILL.md": "88e14d0d786cd8055a13381631dc0b11dfc8e345b783489d70e2f9de62ee8c45",
+    ".agents/skills/vaoferi-project-adaptation/SKILL.md": "adc37c7f5478c52c0a858f331a47f1ccd9c72b4aa9882dca6de95c41b5b311bb",
+    ".agents/skills/vaoferi-security/SKILL.md": "a160cefd30aa4c55c4b5117e2e59c73ed89825e5c392bb9f37a23eb09bfae782",
+    ".agents/skills/vaoferi-task-tracking/SKILL.md": "c2757021eb20c5e2380edaa50b69543ee1aefaeaff8dfbee812fc48b686d8119",
+    ".vaoferi/verify.py": "34d62f03aa93827df3703077e2d0acb7dd1db3974d7d8dd9d5961191b1beba70",
+    "AGENTS.md": "a8f76c56675834e5e91920baedb3219c7856b8dc05d39dafd91d3d1660194435"
+  },
+  "project_owned": [
+    "PROJECT_RULES.md",
+    "DESIGN.md",
+    "docs/",
+    "tests/"
+  ],
+  "schema": 1,
+  "start_here": {
+    "source_commit": "2b6453bf6eba05f0dd4bf4c2024523283b58ce91",
+    "version": "0.2.6"
+  }
+}

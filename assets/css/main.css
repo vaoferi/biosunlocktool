@@ -101,6 +101,138 @@ html::before {
   50% { background-position: 100% 50%; }
 }
 
+/* US market theme: a restrained signal-lattice experiment. The fine grid and
+   sparse points make the navy field feel technical without competing with the
+   8FC8 hero or the readable glass surfaces. The pattern is CSS-only, so weak
+   networks still get the same atmosphere with no extra request. */
+html[data-market="us"] {
+  --bg: #050d1c;
+  --text: #f5f8ff;
+  --text-2: #bdcce0;
+  --mute: #9eafc7;
+  --card: rgba(7, 17, 32, 0.5);
+  --card-border: rgba(126, 181, 243, 0.22);
+  --glass-bg: rgba(5, 13, 26, 0.54);
+  --glass-shadow: 0 12px 40px rgba(0, 4, 14, 0.64);
+  --accent: #6aaef5;
+  --accent-2: #86b7e9;
+  --selected-border: rgba(106, 174, 245, 0.78);
+  --selected-ring: rgba(106, 174, 245, 0.48);
+}
+
+html[data-market="us"]::before {
+  background:
+    radial-gradient(ellipse at 78% 12%, rgba(74, 147, 232, 0.24) 0%, transparent 26%),
+    radial-gradient(ellipse at 14% 86%, rgba(136, 182, 235, 0.12) 0%, transparent 32%),
+    linear-gradient(135deg, #050d1c 0%, #0a2344 45%, #061326 100%);
+  background-size: 160% 160%;
+  animation: usSignalAtmosphere 28s cubic-bezier(.45, 0, .25, 1) infinite alternate;
+}
+
+html[data-market="us"]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image:
+    radial-gradient(circle at 12px 12px, rgba(186, 217, 255, 0.34) 0 1px, transparent 1.7px),
+    repeating-linear-gradient(90deg, rgba(132, 177, 230, 0.08) 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(0deg, rgba(132, 177, 230, 0.05) 0 1px, transparent 1px 72px);
+  background-size: 180px 180px, 72px 72px, 72px 72px;
+  -webkit-mask-image: linear-gradient(125deg, transparent 0%, black 34%, transparent 100%);
+  mask-image: linear-gradient(125deg, transparent 0%, black 34%, transparent 100%);
+  mix-blend-mode: screen;
+  animation: usSignalLattice 36s linear infinite;
+}
+
+@keyframes usSignalAtmosphere {
+  0% { background-position: 12% 42%; }
+  100% { background-position: 88% 58%; }
+}
+
+@keyframes usSignalLattice {
+  from { transform: translate3d(-1.2%, -0.4%, 0); }
+  to { transform: translate3d(1.2%, 0.6%, 0); }
+}
+
+/* Canada market theme: a dark ink field with restrained maple-red and ice-blue
+   cues. The crossed diagonal lattice is an abstract regional reference rather
+   than a literal flag or a claim to represent every Canadian community. */
+html[data-market="canada"] {
+  --bg: #080e16;
+  --text: #f8fbff;
+  --text-2: #c9d9e3;
+  --mute: #a8bdc9;
+  --card: rgba(8, 17, 25, 0.54);
+  --card-border: rgba(224, 83, 96, 0.3);
+  --glass-bg: rgba(7, 14, 22, 0.6);
+  --glass-shadow: 0 12px 42px rgba(0, 3, 10, 0.66);
+  --accent: #e96b75;
+  --accent-2: #91c7d8;
+  --selected-border: rgba(233, 107, 117, 0.8);
+  --selected-ring: rgba(233, 107, 117, 0.5);
+}
+
+html[data-market="canada"]::before {
+  background:
+    radial-gradient(ellipse at 16% 14%, rgba(219, 63, 78, 0.34) 0%, transparent 25%),
+    radial-gradient(ellipse at 84% 82%, rgba(117, 184, 210, 0.22) 0%, transparent 30%),
+    linear-gradient(135deg, #07101b 0%, #102b3b 46%, #321821 72%, #070c13 100%);
+  background-size: 165% 165%;
+  animation: canadaAtmosphere 30s cubic-bezier(.45, 0, .25, 1) infinite alternate;
+}
+
+html[data-market="canada"]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  background-image:
+    linear-gradient(45deg, transparent 0 44%, rgba(233, 107, 117, 0.2) 44.5% 47%, transparent 47.5% 100%),
+    linear-gradient(135deg, transparent 0 44%, rgba(145, 199, 216, 0.16) 44.5% 47%, transparent 47.5% 100%),
+    repeating-linear-gradient(90deg, rgba(226, 244, 249, 0.05) 0 1px, transparent 1px 30px);
+  background-size: 96px 96px, 96px 96px, 30px 30px;
+  -webkit-mask-image: linear-gradient(135deg, black 0%, transparent 92%);
+  mask-image: linear-gradient(135deg, black 0%, transparent 92%);
+  mix-blend-mode: screen;
+  animation: canadaMapleLattice 38s linear infinite;
+}
+
+@keyframes canadaAtmosphere {
+  0% { background-position: 10% 56%; }
+  100% { background-position: 90% 44%; }
+}
+
+@keyframes canadaMapleLattice {
+  from { transform: translate3d(-1.4%, -0.4%, 0) rotate(-0.12deg); }
+  to { transform: translate3d(1.4%, 0.6%, 0) rotate(0.12deg); }
+}
+
+html[data-market="us"] ::selection {
+  background: rgba(106, 174, 245, 0.42);
+}
+
+html[data-market="canada"] ::selection {
+  background: rgba(233, 107, 117, 0.44);
+}
+
+html[data-market="us"] .buy-card[data-selected],
+html[data-market="canada"] .buy-card[data-selected] {
+  border-color: var(--selected-border);
+  box-shadow: 0 0 0 1px var(--selected-ring), var(--glass-shadow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-market="us"]::before,
+  html[data-market="us"]::after,
+  html[data-market="canada"]::before,
+  html[data-market="canada"]::after { animation: none; }
+}
+
 /* India market theme: abstract saffron / navy / green atmosphere, not a flag.
    The official palette is used as light and depth cues only; the landing copy,
    hero figures and conversion controls remain shared with the US canonical page. */
@@ -495,6 +627,31 @@ html[data-market="africa"] .buy-card[data-selected] {
 }
 .cta-dot svg { width: 14px; height: 14px; }
 .cta-text { font-size: 14px; font-weight: 500; }
+
+/* India-only language control: English remains the stable default, while the
+   Hindi choice stays compact enough to coexist with the sticky CTA on mobile. */
+.language-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 34px; padding: 6px 11px;
+  color: var(--text-2); font-size: 12px; font-weight: 700;
+  letter-spacing: .01em; white-space: nowrap;
+  background: rgba(255, 179, 71, 0.1);
+  border: 1px solid rgba(255, 179, 71, 0.38);
+  border-radius: 999px;
+  transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.language-toggle:hover,
+.language-toggle:focus-visible {
+  color: var(--text);
+  background: rgba(255, 179, 71, 0.2);
+  border-color: rgba(255, 179, 71, 0.72);
+  transform: translateY(-1px);
+}
+.language-toggle[aria-pressed="true"] { color: #120a2e; background: var(--accent); border-color: var(--accent); }
+.language-toggle[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .language-toggle { transition: none; }
+}
 
 /* HERO */
 /* Вертикальний ритим hero — clamp від vmin: на низьких екранах відступи стискаються,
@@ -943,6 +1100,7 @@ html[data-market="africa"] .buy-card[data-selected] {
    Панель — випадаючий список під хедером (absolute, не штовхає контент). */
 @media (max-width: 900px) {
   .nav-toggle { display: inline-flex; order: 2; margin-left: auto; }
+  .language-toggle { order: 1; }
   .header-cta { order: 3; }
   .nav-pills {
     /* Панель НЕ display:none↔flex (миттєве показ/ховання), а завжди в дереві:
@@ -1010,6 +1168,7 @@ html[data-market="africa"] .buy-card[data-selected] {
 
 /* RESPONSIVE — Mobile small */
 @media (max-width: 480px) {
+  .language-toggle { min-height: 32px; padding-inline: 9px; font-size: 11px; }
   .step-row { grid-template-columns: 1fr; }
   .guides-grid { grid-template-columns: 1fr; }
   .hero-cta-row { flex-direction: column; }

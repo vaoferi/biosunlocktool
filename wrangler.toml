@@ -5,4 +5,6 @@ pages_build_output_dir = "."
 # Pages-конфіг (ВАЖЛИВО: це Pages, а не Workers — тому тут НЕ буває main/routes/[site]/crons;
 # вони належать wrangler.toml для Workers і ламають `wrangler pages deploy`).
 # Домени (apex, www, in./de./pl./af.) підключаються в Dashboard: Pages проєкт → Custom domains.
-# Деплой: GitHub Action (.github/workflows/deploy.yml) на кожен пуш у main.
+# Деплой: GitHub Action (.github/workflows/deploy.yml) на push у main або
+# workflow_dispatch; потрібні secrets CF_ACCOUNT_ID/CF_API_TOKEN з Pages Edit.
+# Ручний fallback: npm run build && npm run deploy.
