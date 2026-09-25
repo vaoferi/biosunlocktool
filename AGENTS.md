@@ -2,6 +2,8 @@
 
 Універсальний контракт AI-агента з власником Vaoferi repositories. Він однаковий у підключених проєктах; project facts живуть у `PROJECT_RULES.md` та project-owned docs.
 
+`DEFINITION_OF_DONE.md` — centrally-owned обов'язковий completion contract для всіх repository-scoped IMPLEMENTATION задач. Project rules можуть його тільки посилювати, але не послаблювати без explicit owner decision.
+
 ## Communication
 
 - Усі видимі плани, діагностика, питання, SPEC і звіти власнику — українською; product/code language не підміняй мовою спілкування.
@@ -16,9 +18,10 @@
 
 ## Session Baseline
 
-- Перед першою repository-scoped write-capable дією в сесії прочитай `.vaoferi/manifest.json`, звір version/`source_commit` з **canonical latest** `vaoferi/vaoferi-start-here` `main` через trusted source; stale baseline онови лише canonical sync mechanism, потім verify/central drift і `PROJECT_RULES.md`.
-- Перший видимий repo-status окремим рядком: `✅ START HERE VERIFIED — <version> @ <short SHA> · central drift: none · PROJECT_RULES: loaded`. `VERIFIED` дозволений лише після factual latest comparison + local verify.
+- Перед першою repository-scoped write-capable дією в сесії прочитай `.vaoferi/manifest.json`, звір version/`source_commit` з **canonical latest** `vaoferi/vaoferi-start-here` `main` через trusted source; stale baseline онови лише canonical sync mechanism, потім verify/central drift, `DEFINITION_OF_DONE.md` і `PROJECT_RULES.md`.
+- Перший видимий repo-status окремим рядком: `✅ START HERE VERIFIED — <version> @ <short SHA> · central drift: none · DoD: loaded · PROJECT_RULES: loaded`. `VERIFIED` дозволений лише після factual latest comparison + local verify.
 - Якщо latest не доведений, update/verify конфліктує або є drift: `⛔ START HERE BLOCKED/OUTDATED — <factual reason>`; write-capable роботу не починай без **explicit owner override**. Read-only diagnosis дозволений лише для blocker discovery.
+- Перед новою IMPLEMENTATION задачею виконай `python .vaoferi/check_worktree_clean.py` (або exact `git status --porcelain=v1 --untracked-files=all`). pre-existing dirty tree не можна ігнорувати: продовжуй owning task до clean remote state або лишай нову роботу `In Progress / BLOCKED`; невідомі зміни не reset/delete.
 
 ## Autonomy And Risk
 
@@ -46,8 +49,10 @@
 
 ## Verification
 
-- `In Review` / `Done` потребують доказу кожного релевантного acceptance criterion.
+- `In Review` / `Done` потребують доказу кожного релевантного acceptance criterion і повного `DEFINITION_OF_DONE.md`.
 - User action/UI behavior перевіряй на actual **topmost user-facing target** у rendered/runtime surface; **Source/string/DOM-presence** не substitute.
+- Для UI/layout/responsive/browser змін manual browser QA = **усі affected surfaces × 10 canonical viewport states** із `DEFINITION_OF_DONE.md`; project docs можуть додати viewport-и, але не прибрати базову матрицю.
+- UI/layout/responsive зміни також потребують automated browser geometry/visibility regression gate з breakpoint boundaries та owner-reproduced edge cases; screenshot diff може доповнювати, але не замінює semantic geometry checks.
 - Required browser/runtime недоступні → **BLOCKED**, task лишається `In Progress`; missing proof не pass.
 - `VISUAL APPROVAL` → explicit owner approval production-faithful current UI/prototype; новий authored-UI `!important` — hard failure без exact exception.
 - Review потребує exact SHA/version на current **reviewer-accessible** artifact, якщо потрібен runtime/visual review. Stale preview, `HTTP 200`, build PASS або code presence не acceptance.
@@ -58,6 +63,7 @@
 
 - Перед змінами/commit перевір status/diff настільки, наскільки дозволяє середовище.
 - Кожна repository-scoped Linear task перед `In Review`/`Done` вимагає **commit + push**; handoff містить exact **pushed SHA**. Local-only commit не review evidence.
+- Перед handoff підтвердь intended local HEAD == reviewer-accessible remote branch/PR head і обов'язково отримай `WORKTREE CLEAN: PASS`; фінальний `git status --porcelain=v1 --untracked-files=all` має бути порожнім. Будь-який staged/modified/deleted/renamed/untracked хвіст блокує completion, доки його не класифіковано, не збережено/commit+push або безпечно не прибрано за правилами `DEFINITION_OF_DONE.md`.
 - Не commit secrets, real `.env`, cookies, dumps, temp/dependency garbage; не роби destructive cleanup чужих змін.
 - Не змішуй без потреби feature/refactor/dependency/deploy/cosmetics; branch/worktree використовуй лише коли цього потребує risk/parallelism/tooling.
 
@@ -68,7 +74,7 @@
 
 ## Routing
 
-- Спочатку прочитай `PROJECT_RULES.md`.
+- Спочатку прочитай `DEFINITION_OF_DONE.md`, потім `PROJECT_RULES.md`.
 - New/unsynced repo або missing context → `vaoferi-bootstrap`; legacy/nested/conflicting docs → `vaoferi-project-adaptation`.
 - UI/layout/responsive/components/tokens/typography/design docs → `vaoferi-design-skill`.
 - Dependencies/versions/upgrades → `vaoferi-dependencies`; secrets/auth/privacy → `vaoferi-security`; non-trivial implementation/bug/refactor/tests → `vaoferi-engineering`.
@@ -78,6 +84,6 @@
 ## Task Tracking
 
 - `Linear` — єдине active task source. `In Review` = **Ready for Review**; failed/blocked лишається `In Progress`, blocked handoff має бути **детальнішим** за success.
-- Repository-scoped **implementation task** продовжуй **до повного completion loop** за `vaoferi-task-tracking`; не зупиняйся на partial result.
+- Repository-scoped **implementation task** продовжуй **до повного completion loop** за `DEFINITION_OF_DONE.md` + `vaoferi-task-tracking`; не зупиняйся на partial result.
 - `Definition of Done` формулюй outcome-first, **мовою користувача**. Reviewer independently verifies: FAIL → `In Progress`; PASS без owner-only gate → `Done`; owner-only acceptance → `In Review`.
 - `Trello` — legacy input: relevant card прочитай повністю, перенеси useful work/facts у Linear/canonical sources, verify parity; після parity hard-delete або архів/close. Не створюй нових Trello cards і не веди паралельні sources of truth.

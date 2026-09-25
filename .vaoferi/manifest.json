@@ -21,9 +21,11 @@
     ".agents/skills/vaoferi-engineering/SKILL.md": "88e14d0d786cd8055a13381631dc0b11dfc8e345b783489d70e2f9de62ee8c45",
     ".agents/skills/vaoferi-project-adaptation/SKILL.md": "adc37c7f5478c52c0a858f331a47f1ccd9c72b4aa9882dca6de95c41b5b311bb",
     ".agents/skills/vaoferi-security/SKILL.md": "a160cefd30aa4c55c4b5117e2e59c73ed89825e5c392bb9f37a23eb09bfae782",
-    ".agents/skills/vaoferi-task-tracking/SKILL.md": "c2757021eb20c5e2380edaa50b69543ee1aefaeaff8dfbee812fc48b686d8119",
+    ".agents/skills/vaoferi-task-tracking/SKILL.md": "575ebc3e6d93571235ce760676eb6d0bdb8546ef0b241a1845dcd4f84cfdcb23",
+    ".vaoferi/check_worktree_clean.py": "dc885a5036aa8f49f15df9a15091a3e7c88929efe4efa3965bc73292bb5cae6e",
     ".vaoferi/verify.py": "34d62f03aa93827df3703077e2d0acb7dd1db3974d7d8dd9d5961191b1beba70",
-    "AGENTS.md": "a8f76c56675834e5e91920baedb3219c7856b8dc05d39dafd91d3d1660194435"
+    "AGENTS.md": "fe3a560ddd1fbe05ad57ecc57b0079fe554254f780d9d131c1186474608c53dc",
+    "DEFINITION_OF_DONE.md": "9bf44a17e287d4d158513a2764ebf9d3e253599fda907bb30807156b688dfca3"
   },
   "project_owned": [
     "PROJECT_RULES.md",
@@ -33,7 +35,7 @@
   ],
   "schema": 1,
   "start_here": {
-    "source_commit": "2b6453bf6eba05f0dd4bf4c2024523283b58ce91",
-    "version": "0.2.6"
+    "source_commit": "df09f9bab78913e4ac225d38e5da3c1a668cf103",
+    "version": "0.2.7"
   }
 }

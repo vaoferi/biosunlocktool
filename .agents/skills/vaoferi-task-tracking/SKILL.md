@@ -9,6 +9,8 @@ description: Use when reading, migrating, creating, updating, or retiring work i
 
 `Linear` — єдине активне джерело робочих задач. `Trello` — тимчасове legacy input для міграції, не planner і не довгостроковий archive.
 
+`DEFINITION_OF_DONE.md` — обов'язковий centrally-owned completion contract для кожної repository-scoped IMPLEMENTATION задачі. Цей skill уточнює lifecycle, але не може послабити DoD.
+
 ## Mandatory issue modes
 
 Перед execution кожна картка має бути однозначно віднесена до одного mode. Якщо mode не вказаний у title/description/template, агент визначає його перед роботою й фіксує одним рядком у Linear.
@@ -21,7 +23,11 @@ description: Use when reading, migrating, creating, updating, or retiring work i
 
 ## IMPLEMENTATION hard completion loop
 
-Після execution intent агент продовжує IMPLEMENTATION task самостійно до повного Definition of Done; **не зупиняйся після коду**, локального вигляду або довгого звіту в очікуванні, що owner окремо нагадає про lint/tests/build/commit/push.
+Перед execution прочитай `DEFINITION_OF_DONE.md` і project-owned `PROJECT_RULES.md`/`TESTING.md`/design contracts, релевантні задачі.
+
+Перед **новою** IMPLEMENTATION задачею виконай `python .vaoferi/check_worktree_clean.py` або exact `git status --porcelain=v1 --untracked-files=all`. Якщо є pre-existing dirty state, не ігноруй його і не починай поверх нього новий slice: визнач owning task, доведи його до commit + push + `WORKTREE CLEAN: PASS`, або залиш нову роботу `In Progress / BLOCKED`. Невідомі зміни не reset/delete.
+
+Після execution intent агент продовжує IMPLEMENTATION task самостійно до повного Definition of Done; **не зупиняйся після коду**, локального вигляду або довгого звіту в очікуванні, що owner окремо нагадає про lint/tests/build/browser QA/commit/push.
 
 До `In Review` / `Done` виконай усе applicable для цього slice:
 
@@ -29,15 +35,18 @@ description: Use when reading, migrating, creating, updating, or retiring work i
 2. проганяй focused regression/tests для зміненого behavior;
 3. проганяй project-required lint/typecheck/static/security gates, релевантні цьому slice;
 4. зроби build, якщо зміна впливає на buildable artifact;
-5. виконай relevant browser/runtime verification для browser/runtime-dependent behavior;
-6. перевір diff на unintended edits, secrets, generated garbage і випадкові dependency/config зміни;
-7. виправ failures, якщо вони спричинені цією карткою;
-8. commit із issue reference;
-9. push;
-10. підтвердь **REMOTE SYNC**: intended local HEAD == remote branch/PR head;
-11. запиши короткий evidence handoff.
+5. для UI/layout/responsive/browser змін вручну перевір **кожну affected user-facing surface × 10 canonical viewport states** з `DEFINITION_OF_DONE.md`, плюс project-specific states;
+6. для UI/layout/responsive змін проганяй automated browser geometry/visibility regression gate з breakpoint boundaries та owner-reproduced edge cases;
+7. виконай інший relevant browser/runtime verification для browser/runtime-dependent behavior;
+8. перевір diff на unintended edits, secrets, generated garbage, незрозумілі untracked/modified хвости і випадкові dependency/config зміни;
+9. виправ failures, якщо вони спричинені цією карткою;
+10. commit із issue reference;
+11. push;
+12. підтвердь **REMOTE SYNC**: intended local HEAD == remote branch/PR head;
+13. запусти `python .vaoferi/check_worktree_clean.py` і отримай `WORKTREE CLEAN: PASS`;
+14. запиши exact pushed SHA і короткий evidence handoff у Linear.
 
-IMPLEMENTATION не може бути `Done`, якщо її власні required gates, build/runtime evidence, commit, push або REMOTE SYNC ще попереду.
+IMPLEMENTATION не може бути `In Review` або `Done`, якщо її required gates, affected-surface browser matrix, automated responsive/geometry gate, build/runtime evidence, clean intended diff, commit, push або REMOTE SYNC ще попереду.
 
 ## Failure classification before product changes
 
@@ -50,7 +59,7 @@ IMPLEMENTATION не може бути `Done`, якщо її власні require
 
 ## No report-and-wait default
 
-Після команди «виконай картку» агент не робить часткову роботу й не чекає другого owner prompt на тести, commit, push або доробку.
+Після команди «виконай картку» агент не робить часткову роботу й не чекає другого owner prompt на тести, browser QA, commit, push або доробку.
 
 Очікування owner допустиме лише коли потрібна реальна owner-only дія/рішення, наприклад:
 
@@ -66,13 +75,17 @@ IMPLEMENTATION не може бути `Done`, якщо її власні require
 Успішний IMPLEMENTATION handoff має містити короткий machine-readable блок:
 
 - `MODE: IMPLEMENTATION`
-- `SHA/PR:`
+- `SHA/PR: <exact pushed SHA / PR>`
 - `FOCUSED TESTS: PASS`
 - `PROJECT GATES: PASS` або `N/A + reason`
-- `BUILD: PASS` або `N/A`
-- `BROWSER/RUNTIME: PASS` або `N/A`
+- `BUILD: PASS` або `N/A + reason`
+- `BROWSER/RUNTIME: PASS — <affected surfaces> × <manual states count>` або `N/A + documented non-UI reason`
+- `AUTOMATED RESPONSIVE/GEOMETRY: PASS — <command/test>` або `N/A + documented non-UI reason`
 - `REMOTE SYNC: PASS`
+- `WORKTREE CLEAN: PASS — python .vaoferi/check_worktree_clean.py`
 - `KNOWN EXCEPTIONS: none` або explicit accepted exception
+
+Missing field/evidence для applicable gate = FAIL → задача лишається `In Progress`.
 
 DISCOVERY / INTAKE handoff:
 
@@ -117,7 +130,7 @@ A success handoff must include:
 2. changed files and branch/commit/PR;
 3. exact remote branch/PR and **pushed SHA**; verify the commit exists on the remote before handoff;
 4. acceptance ledger;
-5. commands/tests/browser/runtime checks with exact observed results;
+5. commands/tests/browser/runtime checks with exact observed results, including affected-surface × viewport evidence when applicable;
 6. reviewer-accessible artifact/URL + exact SHA/version where relevant;
 7. known risks and anything unverified;
 8. exact owner action still required, if any.
@@ -164,7 +177,7 @@ Use **blocked-first** selection:
 3. inside each bucket: `Urgent` → `High` → `Medium` → `Low`;
 4. tie-breaker: **oldest waiting first**.
 
-A blocked issue is more urgent for the reviewer than an ordinary `In Review` issue because the executor cannot progress.
+A blocked issue is more urgent для reviewer than an ordinary `In Review` issue because the executor cannot progress.
 
 ### Mandatory review cycle
 
@@ -195,6 +208,7 @@ For blocked work:
 
 For `In Review`:
 - first verify the executor's **pushed SHA** exists on the remote and matches the described task scope; missing/unpushed SHA = FAIL → `In Progress`;
+- verify `DEFINITION_OF_DONE.md` evidence independently, including affected-surface browser matrix and automated responsive/geometry gate when applicable;
 - independent FAIL → detailed review comment + `In Progress`;
 - technical PASS but owner-only visual/business acceptance still pending → keep `In Review`, state exact owner action;
 - full PASS with no owner-only gate → `Done`.
