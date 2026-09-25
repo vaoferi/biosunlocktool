@@ -1,0 +1,6 @@
+# Wrangler Pages local preview state; never publish it with the landing.
+.wrangler/
+# Gates are dependency-free: `npm run check` and `npm test` run on plain Node.
+# Local tooling installs (npm install, npx wrangler) are scratch state on the
+# NAS checkout and must never be published with the landing.
+node_modules/
